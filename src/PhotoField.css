@@ -1,0 +1,17 @@
+.tPhotoFieldPreview {
+  height: 34px;
+  line-height: 0;
+  font-size: 0;
+}
+.isAndroid.isNotChrome .tPhotoFieldPreview {
+  position: relative;
+  top: 1px;
+}
+.tPhotoFieldIcon {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+}
+
+/*# sourceMappingURL=PhotoField.css.map */
