@@ -1,0 +1,33 @@
+{
+  "name": "tingle-slide",
+  "version": "0.0.0",
+  "description": "The best module ever.",
+  "repository": "https://github.com/tinglejs/tingle-slide.git",
+  "author": {
+    "name": "gnosaij",
+    "email": ""
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "keywords": [
+    "tingle-slide,Slide",
+    ""
+  ],
+  "dependencies": {
+    "fastclick": "~1.0.6",
+    "react": "^0.13.3"
+  },
+  "devDependencies": {
+    "babel-core": "^5.2.17",
+    "babel-loader": "^5.0.0",
+    "browser-sync": "~1.9.1",
+    "gulp-sourcemaps": "~1.5.1",
+    "gulp-stylus": "~2.0.1",
+    "gulp-uglify": "^1.2.0",
+    "webpack": "^1.8.4"
+  },
+  "scripts": {},
+  "license": "MIT"
+}
