@@ -123,6 +123,8 @@ class Slide extends React.Component {
         t._maxIndex = t.length - 1;
 
         t._goto(t.state.index, true);
+
+        t.props.onMount();
     }
 
     /**
@@ -432,10 +434,17 @@ class Slide extends React.Component {
 
     _slideEnd() {
         var t = this;
-        t.props.onSlideEnd.call(t, {
-            index: t.currentPosIndex,
-            item: t._current
+        var realIndex = t._getRealIndex();
+        t.props.onSlideEnd({
+            index: realIndex,
+            item: t._current,
+            data: t.state.list[realIndex]
         });
+    }
+
+    _getRealIndex() {
+        var t = this;
+        return t._dummy ? t._dummyIndex[t.currentPosIndex] : t.currentPosIndex;
     }
 
     /**
@@ -460,12 +469,15 @@ class Slide extends React.Component {
                 [t.props.className]: !!t.props.className
             })}>
                 <div className="t3D tSlideView">
-                    {t.state.list.map(function (item) {
+                    {t.state.list.map(function (item, i) {
+                        console.log(i);
                         // TODO remove item.title form classname
-                        return <div ref={"item" + itemIndex} key={itemIndex++}
-                         className={"tSlideItem " + item.title} style={{
+                        var el = <div ref={"item" + itemIndex} key={itemIndex}
+                         className={"tSlideItem tSlideItem" + itemIndex} style={{
                             backgroundImage: "url("+ item.img +")"
                         }}></div>;
+                        itemIndex++;
+                        return el;
                     })}
                 </div>
             </div>
@@ -480,6 +492,7 @@ Slide.propTypes = {
 
 Slide.defaultProps = {
     index: 0,
+    onMount: function () {},
     onSlideEnd: function () {}
 };
 
