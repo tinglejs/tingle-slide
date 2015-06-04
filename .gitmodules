@@ -1,0 +1,3 @@
+[submodule "tingle/tingle-style"]
+	path = tingle/tingle-style
+	url = https://github.com/tinglejs/tingle-style.git
