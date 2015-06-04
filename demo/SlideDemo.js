@@ -28,6 +28,10 @@ class Demo extends React.Component {
             }]
         };
     }
+
+    handleSlideMount(slide) {
+        console.log(slide);
+    }
     
     handleSlideEnd(o) {
         console.log(o);
@@ -38,6 +42,7 @@ class Demo extends React.Component {
         return (<div>
             <h3 className="tP10">一般情况，item数量大于2</h3>
             <Slide list={this.state.slideList}
+             onMount={t.handleSlideMount.bind(t)}
              onSlideEnd={t.handleSlideEnd.bind(t)}/>
 
             <h3 className="tP10">特殊情况1，item数量等于2</h3>

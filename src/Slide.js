@@ -111,9 +111,7 @@ class Slide extends React.Component {
             t.el.addEventListener(START, t, false);
         }
 
-        // t._pos = [PREV, CURRENT, NEXT];
-
-        // 前一个，当前的，后一个item的索引
+        // 前一个，当前的，后一个item的element引用
         t._prev = null;
         t._current = null;
         t._next = null;
@@ -124,7 +122,7 @@ class Slide extends React.Component {
 
         t._goto(t.state.index, true);
 
-        t.props.onMount();
+        t.props.onMount(t);
     }
 
     /**
@@ -434,7 +432,7 @@ class Slide extends React.Component {
 
     _slideEnd() {
         var t = this;
-        var realIndex = t._getRealIndex();
+        var realIndex = t._getRealIndex(t.currentPosIndex);
         t.props.onSlideEnd({
             index: realIndex,
             item: t._current,
@@ -442,9 +440,9 @@ class Slide extends React.Component {
         });
     }
 
-    _getRealIndex() {
+    _getRealIndex(dummyIndex) {
         var t = this;
-        return t._dummy ? t._dummyIndex[t.currentPosIndex] : t.currentPosIndex;
+        return t._dummy ? t._dummyIndex[dummyIndex] : dummyIndex;
     }
 
     /**
@@ -461,7 +459,6 @@ class Slide extends React.Component {
         // TODO 
         // * if list.length === 0 ...
         var t = this;
-        var itemIndex = 0;
         return (
             <div className={cx({
                 "tSlide": true,
@@ -469,15 +466,11 @@ class Slide extends React.Component {
                 [t.props.className]: !!t.props.className
             })}>
                 <div className="t3D tSlideView">
-                    {t.state.list.map(function (item, i) {
-                        console.log(i);
-                        // TODO remove item.title form classname
-                        var el = <div ref={"item" + itemIndex} key={itemIndex}
-                         className={"tSlideItem tSlideItem" + itemIndex} style={{
-                            backgroundImage: "url("+ item.img +")"
-                        }}></div>;
-                        itemIndex++;
-                        return el;
+                    {t.state.list.map(function (item, index) {
+                        return <div ref={"item" + index} key={index}
+                         className={"tSlideItem tSlideItem" + t._getRealIndex(index)}
+                         style={{backgroundImage: "url("+ item.img +")"}}>
+                        </div>;
                     })}
                 </div>
             </div>
