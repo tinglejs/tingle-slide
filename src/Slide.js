@@ -1,3 +1,5 @@
+var classnames = require('classnames');
+
 var win = window;
 var doc = document;
 
@@ -60,7 +62,7 @@ class Slide extends React.Component {
         this.state = {
             // NOTE: 把list转成state的原因：
             // 当item数量为2时，内部将会复制一份，处理后的数量为4，以实现循环轮播
-            list: props.list,
+            // list: props.list,
             // 当前item的索引值 以0开始
             index: props.index,
             disabled: false
@@ -74,15 +76,21 @@ class Slide extends React.Component {
     componentWillMount() {
         var t = this;
 
+        // 要保证list是一个数组
+        // 当子元素只有一个时，props.children不是数组
+        t.state.list = [].concat(t.props.children);
+
+        var originLength = React.Children.count(t.state.list);
+
         // TODO: check
-        if (t.state.list.length === 1) {
+        if (originLength === 1) {
             t.state.disabled = true;
         }
 
         // item的长度经处理后不存在为2的情况
-        else if (t.state.list.length === 2) {
-            t.state.list = t.state.list.concat(t.state.list);
+        else if (originLength === 2) {
             t._dummy = true;
+            t.state.list = t.state.list.concat(t.state.list);
             t._dummyIndex = {
                 '0' : 0,
                 '1' : 1,
@@ -92,10 +100,7 @@ class Slide extends React.Component {
         }
 
         // 处理以后的长度，即item的个数
-        t.length = t.state.list.length;
-
-        // 初始化必要的属性
-        // t.itemEls = [];
+        t.length = t._dummy ? 4 : originLength;
     }
 
     componentDidMount() {
@@ -455,21 +460,20 @@ class Slide extends React.Component {
     }
 
     render() {
-        var cx = React.addons.classSet;
         // TODO 
         // * if list.length === 0 ...
         var t = this;
         return (
-            <div className={cx({
+            <div className={classnames({
                 "tSlide": true,
                 "tSlideOff": t.state.disabled,
                 [t.props.className]: !!t.props.className
             })}>
                 <div className="t3D tSlideView">
-                    {t.state.list.map(function (item, index) {
+                    {t.state.list.map(function (Child, index) {
                         return <div ref={"item" + index} key={index}
-                         className={"tSlideItem tSlideItem" + t._getRealIndex(index)}
-                         style={{backgroundImage: "url("+ item.img +")"}}>
+                         className={"tSlideItem tSlideItem" + t._getRealIndex(index)}>
+                            {Child}
                         </div>;
                     })}
                 </div>
@@ -479,7 +483,7 @@ class Slide extends React.Component {
 }
 
 Slide.propTypes = {
-    list: React.PropTypes.array.isRequired,
+    // list: React.PropTypes.array.isRequired,
     index: React.PropTypes.number
 };
 
