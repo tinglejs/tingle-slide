@@ -1,0 +1,1 @@
+{"version":3,"sources":["SlideDemo.styl"],"names":[],"mappings":"AAAA;EACI,mBAAkB,UAAlB;EACA,qBAAoB,OAApB;EACA,yBAAwB,MAAxB;EACA,iBAAgB,MAAhB","file":"SlideDemo.css","sourcesContent":[".tImageSlideItem\n    background-repeat no-repeat\n    background-position center\n    -webkit-background-size cover\n    background-size cover"],"sourceRoot":"/source/"}
