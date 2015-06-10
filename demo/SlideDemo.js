@@ -8,6 +8,7 @@ class Demo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            freeCount: 0,
             slideList: [{
                 img: './demo/img/0.jpg',
                 url: '',
@@ -28,24 +29,40 @@ class Demo extends React.Component {
         };
     }
 
+    componentDidMount() {
+        var t = this;
+        var customSlide = t.refs.customSlide;
+        setTimeout(function () {
+            customSlide._goNext();
+        }, 1000);
+    }
+
     handleSlideMount(slide) {
-        console.log(slide);
     }
     
     handleSlideEnd(o) {
-        console.log(o);
     }
+
+    handleSlideCount(o) {
+        this.setState({
+            freeCount: this.state.freeCount + 1
+        });
+    } 
 
     render() {
         var t = this;
         return (<div>
             <h3 className="tP10">自定义内容，自定义高度</h3>
-            <Slide height={400}>
-                <div className="tFBH tFBAC tFBJC" style={{backgroundColor:"orange"}}>
-                    <a className="tFCf" href="http://baidu.com">BAIDU</a>
+            <Slide ref="customSlide" height={400} autoSlide={true}
+             onSlideEnd={t.handleSlideCount.bind(t)}
+             onMount={t.handleSlideMount.bind(t)}>
+                <div className="tFBV tFBAC tFBJC" style={{backgroundColor:"orange"}}>
+                    <div><a className="tFCf" href="http://baidu.com">BAIDU</a></div>
+                    <div className="tFS20 tLH2 tFCf">数数玩：{t.state.freeCount}</div>
                 </div>
-                <div className="tFBH tFBAC tFBJC" style={{backgroundColor:"yellowgreen"}}>
+                <div className="tFBV tFBAC tFBJC" style={{backgroundColor:"yellowgreen"}}>
                     <div className="tR6 tW44 tH44 tLH44 tFAC tBC3 tFCf tFS20">T</div>
+                    <div className="tFS20 tLH2 tFCf">数数玩：{t.state.freeCount}</div>
                 </div>
             </Slide>
 

@@ -64,6 +64,7 @@ class Slide extends React.Component {
             // 当item数量为2时，内部将会复制一份，处理后的数量为4，以实现循环轮播
             // list: props.list,
             // 当前item的索引值 以0开始
+            autoSlide: props.autoSlide,
             index: props.index,
             disabled: false
         }
@@ -78,9 +79,9 @@ class Slide extends React.Component {
 
         // 要保证list是一个数组
         // 当子元素只有一个时，props.children不是数组
-        t.state.list = [].concat(t.props.children);
+        // t.state.list = [].concat(t.props.children);
 
-        var originLength = React.Children.count(t.state.list);
+        var originLength = React.Children.count(t.props.children);
 
         // TODO: check
         if (originLength === 1) {
@@ -90,7 +91,7 @@ class Slide extends React.Component {
         // item的长度经处理后不存在为2的情况
         else if (originLength === 2) {
             t._dummy = true;
-            t.state.list = t.state.list.concat(t.state.list);
+            // t.state.list = t.state.list.concat(t.state.list);
             t._dummyIndex = {
                 '0' : 0,
                 '1' : 1,
@@ -128,6 +129,17 @@ class Slide extends React.Component {
         t._goto(t.state.index, true);
 
         t.props.onMount(t);
+
+        t._autoSlide();
+    }
+
+    _autoSlide() {
+        var t = this;
+        if (!t.state.autoSlide) return;
+        t._autoSlideTimer = setTimeout(function () {
+            t._goNext();
+            t._autoSlide();
+        }, 4000);
     }
 
     /**
@@ -316,7 +328,10 @@ class Slide extends React.Component {
         if (supportTouch && e.touches.length > 1) {
             return;
         }
+
         var t = this;
+
+        clearTimeout(t._autoSlideTimer);
 
         // 恢复到0 拖拽过程中快速响应移动距离
         t._prev.style.webkitTransitionDuration = '0ms';
@@ -433,6 +448,8 @@ class Slide extends React.Component {
 
         doc.removeEventListener(MOVE, t, false);
         doc.removeEventListener(END, t, false);
+
+        t._autoSlide();
     }
 
     _slideEnd() {
@@ -441,7 +458,7 @@ class Slide extends React.Component {
         t.props.onSlideEnd({
             index: realIndex,
             item: t._current,
-            data: t.state.list[realIndex]
+            data: t.props.children[realIndex]
         });
     }
 
@@ -459,9 +476,22 @@ class Slide extends React.Component {
         t._goto(t.currentPosIndex);
     }
 
+    /**
+     * 渲染items 当item数量为2时，该方法会被调用两次，第二次函数为true，以实现循环轮播
+     * @param {boolean} dummyMode 是否是在渲染补位的item，
+     * @note 只有当`props.children`的长度为2时，才需要进行补位
+     */
+    _renderItems(dummyMode) {
+        var t = this;
+        return t.props.children.map(function (Child, index) {
+            return <div ref={"item" + (index + (dummyMode ? 2 : 0))} key={index + (dummyMode ? 2 : 0)}
+             className={"tSlideItem tSlideItem" + t._getRealIndex(index)}>
+                {Child}
+            </div>;
+        });
+    }
+
     render() {
-        // TODO 
-        // * if list.length === 0 ...
         var t = this;
         return (
             <div className={classnames({
@@ -470,12 +500,8 @@ class Slide extends React.Component {
                 [t.props.className]: !!t.props.className
             })}>
                 <div className="t3D tSlideView" style={{height: t.props.height}}>
-                    {t.state.list.map(function (Child, index) {
-                        return <div ref={"item" + index} key={index}
-                         className={"tSlideItem tSlideItem" + t._getRealIndex(index)}>
-                            {Child}
-                        </div>;
-                    })}
+                    {t._renderItems()}
+                    {t._dummy && t._renderItems(true)}
                 </div>
             </div>
         );
@@ -485,12 +511,14 @@ class Slide extends React.Component {
 Slide.propTypes = {
     // list: React.PropTypes.array.isRequired,
     height: React.PropTypes.number,
-    index: React.PropTypes.number
+    index: React.PropTypes.number,
+    autoSlide: React.PropTypes.bool
 };
 
 Slide.defaultProps = {
     height: 180,
     index: 0,
+    autoSlide: false,
     onMount: function () {},
     onSlideEnd: function () {}
 };
