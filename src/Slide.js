@@ -3,6 +3,11 @@ var classnames = require('classnames');
 var win = window;
 var doc = document;
 
+var ua = navigator.userAgent;
+var isMobile  = !!ua.match(/mobile/i) || 'orientation' in win;
+var isPC = !isMobile;
+
+
 var supportTouch = 'ontouchstart' in window;
 var support3D = ('WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix());
 
@@ -77,10 +82,6 @@ class Slide extends React.Component {
     componentWillMount() {
         var t = this;
 
-        // 要保证list是一个数组
-        // 当子元素只有一个时，props.children不是数组
-        // t.state.list = [].concat(t.props.children);
-
         var originLength = React.Children.count(t.props.children);
 
         // TODO: check
@@ -91,7 +92,6 @@ class Slide extends React.Component {
         // item的长度经处理后不存在为2的情况
         else if (originLength === 2) {
             t._dummy = true;
-            // t.state.list = t.state.list.concat(t.state.list);
             t._dummyIndex = {
                 '0' : 0,
                 '1' : 1,
@@ -110,7 +110,7 @@ class Slide extends React.Component {
         t.el = React.findDOMNode(t);
 
         // 确定容器宽度
-        t.width = t.el.clientWidth;
+        t.width = isPC ? t.el.clientWidth : win.innerWidth;
 
         // 至少有2张slide时，才初始化事件
         if (t.length > 1) {
@@ -137,7 +137,7 @@ class Slide extends React.Component {
         var t = this;
         if (!t.state.autoSlide) return;
         t._autoSlideTimer = setTimeout(function () {
-            t._goNext();
+            t.goNext();
             t._autoSlide();
         }, 4000);
     }
@@ -165,7 +165,7 @@ class Slide extends React.Component {
             t._slideEnd();
         } else if (!callFromDidMount) {
 
-            // 通过_goNext/_goPrev调用的_goto，一直有方向(_dir)值 向左:-1 / 向右:1
+            // 通过goNext/goPrev调用的_goto，一直有方向(_dir)值 向左:-1 / 向右:1
             if (t._dir) {
                 t._getItemUnready(t._dir === 1 ? t._next : t._prev);
                 t._moveItem(t._current, t._dir);
@@ -201,14 +201,14 @@ class Slide extends React.Component {
     }
 
 
-    _goNext() {
+    goNext() {
         var t = this;
         // 方向是向左(-1)，要展现的是后一张(1)
         t._dir = -1;
         t._goto(t._getPosIndex(1));
     }
 
-    _goPrev() {
+    goPrev() {
         var t = this;
         // 方向是向右(1)，要展现的是前一张(-1)
         t._dir = 1;
@@ -244,7 +244,8 @@ class Slide extends React.Component {
         var t = this;
         var targetPosIndex = t._getPosIndex(offset);
         var item = React.findDOMNode(t.refs['item'+ targetPosIndex]);
-        item.classList.add('ready');
+        // item.classList.add('ready');
+        item.className += ' ready';
         item.setAttribute(OFFSET, offset);
         item.style.webkitTransform = makeTranslate(t._getPosX(offset));
         t['_' + POS_MAP[offset]] = item;
@@ -264,7 +265,8 @@ class Slide extends React.Component {
      */
     _getItemUnready(item) {
         var t = this;
-        item.classList.remove('ready');
+        // item.classList.remove('ready');
+        item.className = item.className.replace('ready', '');
         item.removeAttribute(OFFSET);
         item.style.webkitTransitionDuration = '0';
         item.style.webkitTransform = 'none';
@@ -437,9 +439,9 @@ class Slide extends React.Component {
         t.browserScrolling = false;
 
         if (t.deltaX > t.effectiveDelta) {
-            t._goPrev();
+            t.goPrev();
         } else if (t.deltaX < -t.effectiveDelta) {
-            t._goNext();
+            t.goNext();
         } else {
             t._goto(t.currentPosIndex);
         }
@@ -472,7 +474,7 @@ class Slide extends React.Component {
      */
     _resize() {
         var t = this;
-        t.width = t.el.clientWidth;
+        t.width = isPC ? t.el.clientWidth : win.innerWidth;
         t._goto(t.currentPosIndex);
     }
 
