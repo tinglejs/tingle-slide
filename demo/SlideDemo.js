@@ -36,15 +36,22 @@ class Demo extends React.Component {
 
     handleSlideMount(slide) {
     }
-    
+
     handleSlideEnd(o) {
     }
 
-    handleSlideCount(o) {
+    handleSlideCount() {
         this.setState({
             freeCount: this.state.freeCount + 1
         });
-    } 
+    }
+
+    handleUpdateIndicator(o) {
+        //  强制更新
+        this.setState({
+            demoIndex: o.index
+        });
+    }
 
     render() {
         var t = this;
@@ -62,21 +69,23 @@ class Demo extends React.Component {
             </Slide>
 
             <h3 className="tP10">一般情况，item数量大于2</h3>
-            <Slide onSlideEnd={t.handleSlideCount.bind(t)}>
+            <Slide onSlideEnd={t.handleUpdateIndicator.bind(t)}>
                 {t.state.slideList.map(function (item, index) {
                     return <div key={index} className="tImageSlideItem" style={{
                         backgroundImage: "url("+ item.img +")"
                     }}><span className="tFCf tOP0">{t.state.freeCount}</span></div>
                 })}
             </Slide>
-            <div className="tH30 tFBH tFBAC" style={{
-                marginTop: -30
+            <div className="tFBH tFBAC tFBJC" style={{
+                position: "relative",
+                height: 24,
+                marginTop: -24
             }}>
                 {t.state.slideList.map(function (item, index) {
-                    return <div className="tR4" style={{
-                        width:8, 
-                        height:8,
-                        backgroundColor: index === t.state.demoIndex ? "#fff" : "rgba(0,0,0, .5)"
+                    return <div className="tR4 tM2" style={{
+                        width: 8,
+                        height: 8,
+                        backgroundColor: index === t.state.demoIndex ? "#fff" : "rgba(0,0,0, .3)"
                     }}></div>
                 })}
             </div>
