@@ -8,6 +8,8 @@ class Demo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            freeCount: 0,
+            demoIndex: 0,
             slideList: [{
                 img: './demo/img/0.jpg',
                 url: '',
@@ -28,35 +30,65 @@ class Demo extends React.Component {
         };
     }
 
-    handleSlideMount(slide) {
-        console.log(slide);
+    componentDidMount() {
+
     }
-    
+
+    handleSlideMount(slide) {
+    }
+
     handleSlideEnd(o) {
-        console.log(o);
+    }
+
+    handleSlideCount() {
+        this.setState({
+            freeCount: this.state.freeCount + 1
+        });
+    }
+
+    handleUpdateIndicator(o) {
+        //  强制更新
+        this.setState({
+            demoIndex: o.index
+        });
     }
 
     render() {
         var t = this;
         return (<div>
-            <h3 className="tP10">自定义内容</h3>
-            <Slide>
-                <div className="tFBH tFBAC tFBJC">
-                    <a href="http://baidu.com">baidu</a>
+            <h3 className="tP10">自定义内容，自定义高度</h3>
+            <Slide ref="customSlide" height={80} autoSlide={false}
+             onSlideEnd={t.handleSlideCount.bind(t)}
+             onMount={t.handleSlideMount.bind(t)}>
+                <div className="tFBV tFBAC tFBJC" style={{backgroundColor:"orange"}}>
+                    <div className="tFS20 tFCf">数数玩：{t.state.freeCount}</div>
                 </div>
-                <div className="tFBH tFBAC tFBJC">
-                    <div className="tR6 tW44 tH44 tLH44 tFAC tBC3 tFCf tFS20">T</div>
+                <div className="tFBV tFBAC tFBJC" style={{backgroundColor:"yellowgreen"}}>
+                    <div className="tFS20 tFCf">数数玩：{t.state.freeCount}</div>
                 </div>
             </Slide>
 
             <h3 className="tP10">一般情况，item数量大于2</h3>
-            <Slide>
+            <Slide onSlideEnd={t.handleUpdateIndicator.bind(t)}>
                 {t.state.slideList.map(function (item, index) {
                     return <div key={index} className="tImageSlideItem" style={{
                         backgroundImage: "url("+ item.img +")"
-                    }}></div>
+                    }}><span className="tFCf tOP0">{t.state.freeCount}</span></div>
                 })}
             </Slide>
+            <div className="tFBH tFBAC tFBJC" style={{
+                position: "relative",
+                height: 24,
+                marginTop: -24
+            }}>
+                {t.state.slideList.map(function (item, index) {
+                    return <div className="tR4 tM2" style={{
+                        width: 8,
+                        height: 8,
+                        backgroundColor: index === t.state.demoIndex ? "#fff" : "rgba(0,0,0, .3)"
+                    }}></div>
+                })}
+            </div>
 
             <h3 className="tP10">特殊情况1，item数量等于2</h3>
             <Slide>

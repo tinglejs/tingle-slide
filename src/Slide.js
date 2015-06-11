@@ -3,6 +3,10 @@ var classnames = require('classnames');
 var win = window;
 var doc = document;
 
+var ua = navigator.userAgent;
+var isMobile  = !!ua.match(/mobile/i) || 'orientation' in win;
+var isPC = !isMobile;
+
 var supportTouch = 'ontouchstart' in window;
 var support3D = ('WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix());
 
@@ -24,9 +28,9 @@ var POS_MAP = {
 // 创建translate字符串
 // TODO: translate(0,0) translateZ(0);
 var makeTranslate = (function () {
-    var prefix = support3D ? 'translate3d(' : 'translate('
-      , suffix = support3D ? ', 0)'         : ')'
-      , join   = ',';
+    var prefix = support3D ? 'translate3d(' : 'translate(';
+    var suffix = support3D ? ', 0)'         : ')';
+    var join   = ',';
 
     function v (n) {
         n = '' + (n || 0);
@@ -64,6 +68,7 @@ class Slide extends React.Component {
             // 当item数量为2时，内部将会复制一份，处理后的数量为4，以实现循环轮播
             // list: props.list,
             // 当前item的索引值 以0开始
+            auto: props.auto,
             index: props.index,
             disabled: false
         }
@@ -76,11 +81,7 @@ class Slide extends React.Component {
     componentWillMount() {
         var t = this;
 
-        // 要保证list是一个数组
-        // 当子元素只有一个时，props.children不是数组
-        t.state.list = [].concat(t.props.children);
-
-        var originLength = React.Children.count(t.state.list);
+        var originLength = React.Children.count(t.props.children);
 
         // TODO: check
         if (originLength === 1) {
@@ -90,7 +91,6 @@ class Slide extends React.Component {
         // item的长度经处理后不存在为2的情况
         else if (originLength === 2) {
             t._dummy = true;
-            t.state.list = t.state.list.concat(t.state.list);
             t._dummyIndex = {
                 '0' : 0,
                 '1' : 1,
@@ -109,7 +109,7 @@ class Slide extends React.Component {
         t.el = React.findDOMNode(t);
 
         // 确定容器宽度
-        t.width = t.el.clientWidth;
+        t.width = isPC ? t.el.clientWidth : win.innerWidth;
 
         // 至少有2张slide时，才初始化事件
         if (t.length > 1) {
@@ -128,6 +128,17 @@ class Slide extends React.Component {
         t._goto(t.state.index, true);
 
         t.props.onMount(t);
+
+        t._autoSlide();
+    }
+
+    _autoSlide() {
+        var t = this;
+        if (!t.state.auto) return;
+        t._autoSlideTimer = setTimeout(function () {
+            t.goNext();
+            t._autoSlide();
+        }, 4000);
     }
 
     /**
@@ -153,7 +164,7 @@ class Slide extends React.Component {
             t._slideEnd();
         } else if (!callFromDidMount) {
 
-            // 通过_goNext/_goPrev调用的_goto，一直有方向(_dir)值 向左:-1 / 向右:1
+            // 通过goNext/goPrev调用的_goto，一直有方向(_dir)值 向左:-1 / 向右:1
             if (t._dir) {
                 t._getItemUnready(t._dir === 1 ? t._next : t._prev);
                 t._moveItem(t._current, t._dir);
@@ -189,14 +200,14 @@ class Slide extends React.Component {
     }
 
 
-    _goNext() {
+    goNext() {
         var t = this;
         // 方向是向左(-1)，要展现的是后一张(1)
         t._dir = -1;
         t._goto(t._getPosIndex(1));
     }
 
-    _goPrev() {
+    goPrev() {
         var t = this;
         // 方向是向右(1)，要展现的是前一张(-1)
         t._dir = 1;
@@ -236,12 +247,6 @@ class Slide extends React.Component {
         item.setAttribute(OFFSET, offset);
         item.style.webkitTransform = makeTranslate(t._getPosX(offset));
         t['_' + POS_MAP[offset]] = item;
-        // var img = item.children[0];
-        // if (img && img.tagName === 'IMG' && !img.getAttribute('src')) {
-        //     img.src = item.data('img');
-        // } else {
-            // item.style.backgroundImage = 'url(' + item.data('img')+ ')';
-        // }
     }
 
     /**
@@ -316,7 +321,10 @@ class Slide extends React.Component {
         if (supportTouch && e.touches.length > 1) {
             return;
         }
+
         var t = this;
+
+        clearTimeout(t._autoSlideTimer);
 
         // 恢复到0 拖拽过程中快速响应移动距离
         t._prev.style.webkitTransitionDuration = '0ms';
@@ -422,9 +430,9 @@ class Slide extends React.Component {
         t.browserScrolling = false;
 
         if (t.deltaX > t.effectiveDelta) {
-            t._goPrev();
+            t.goPrev();
         } else if (t.deltaX < -t.effectiveDelta) {
-            t._goNext();
+            t.goNext();
         } else {
             t._goto(t.currentPosIndex);
         }
@@ -433,6 +441,8 @@ class Slide extends React.Component {
 
         doc.removeEventListener(MOVE, t, false);
         doc.removeEventListener(END, t, false);
+
+        t._autoSlide();
     }
 
     _slideEnd() {
@@ -441,7 +451,7 @@ class Slide extends React.Component {
         t.props.onSlideEnd({
             index: realIndex,
             item: t._current,
-            data: t.state.list[realIndex]
+            data: t.props.children[realIndex]
         });
     }
 
@@ -455,13 +465,26 @@ class Slide extends React.Component {
      */
     _resize() {
         var t = this;
-        t.width = t.el.clientWidth;
+        t.width = isPC ? t.el.clientWidth : win.innerWidth;
         t._goto(t.currentPosIndex);
     }
 
+    /**
+     * 渲染items 当item数量为2时，该方法会被调用两次，第二次函数为true，以实现循环轮播
+     * @param {boolean} dummyMode 是否是在渲染补位的item，
+     * @note 只有当`props.children`的长度为2时，才需要进行补位
+     */
+    _renderItems(dummyMode) {
+        var t = this;
+        return t.props.children.map(function (Child, index) {
+            return <div ref={"item" + (index + (dummyMode ? 2 : 0))} key={index + (dummyMode ? 2 : 0)}
+             className={"tSlideItem tSlideItem" + t._getRealIndex(index)}>
+                {Child}
+            </div>;
+        });
+    }
+
     render() {
-        // TODO 
-        // * if list.length === 0 ...
         var t = this;
         return (
             <div className={classnames({
@@ -469,13 +492,9 @@ class Slide extends React.Component {
                 "tSlideOff": t.state.disabled,
                 [t.props.className]: !!t.props.className
             })}>
-                <div className="t3D tSlideView">
-                    {t.state.list.map(function (Child, index) {
-                        return <div ref={"item" + index} key={index}
-                         className={"tSlideItem tSlideItem" + t._getRealIndex(index)}>
-                            {Child}
-                        </div>;
-                    })}
+                <div className="t3D tSlideView" style={{height: t.props.height}}>
+                    {t._renderItems()}
+                    {t._dummy && t._renderItems(true)}
                 </div>
             </div>
         );
@@ -483,12 +502,15 @@ class Slide extends React.Component {
 }
 
 Slide.propTypes = {
-    // list: React.PropTypes.array.isRequired,
-    index: React.PropTypes.number
+    height: React.PropTypes.number,
+    index: React.PropTypes.number,
+    auto: React.PropTypes.bool
 };
 
 Slide.defaultProps = {
+    height: 180,
     index: 0,
+    auto: false,
     onMount: function () {},
     onSlideEnd: function () {}
 };
