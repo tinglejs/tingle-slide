@@ -50,6 +50,8 @@ var getCursorPage = supportTouch ? function (event, page) {
     return event[page];
 };
 
+var noop = function () {};
+
 class Slide extends React.Component {
 
     constructor(props) {
@@ -91,7 +93,7 @@ class Slide extends React.Component {
         // item的长度经处理后不存在为2的情况
         else if (originLength === 2) {
             t._dummy = true;
-            t._dummyIndex = {
+            t._realIndex = {
                 '0' : 0,
                 '1' : 1,
                 '2' : 0,
@@ -145,22 +147,20 @@ class Slide extends React.Component {
      * @param {number} index 目标位置的索引值
      * @param {boolean} callFromDidMount 是否是在componentDidMount中被调用的
      */
-    _goto(index, callFromDidMount) {
+    _goto(posIndex, callFromDidMount) {
         var t = this;
         callFromDidMount = !!callFromDidMount;
 
-        // NOTE: currentIndex和currentPosIndex不完全等值。
-        // 当item为两项的时候，currentIndex的值包括0和1，但currentPosIndex的值包括0，1，2，3
-        t.currentIndex = t._dummy ? t._dummyIndex[index] : index;
-
         if (t.length === 1 || callFromDidMount) {
-            t.currentPosIndex = t.currentIndex;
+            // `_getItemReady`方法被调用之前，需要先更新`currentPosIndex`的值
+            t.currentPosIndex = posIndex;
             t._getItemReady(0);
 
             if (t.length > 2 || t._dummy) {
                 t._getItemReady(1);
                 t._getItemReady(-1);
             }
+
             t._slideEnd();
         } else if (!callFromDidMount) {
 
@@ -169,13 +169,18 @@ class Slide extends React.Component {
                 t._getItemUnready(t._dir === 1 ? t._next : t._prev);
                 t._moveItem(t._current, t._dir);
                 t._moveItem(t._dir === 1 ? t._prev : t._next, t._dir);
-                t.currentPosIndex = index;
 
+                // `_getItemReady`方法被调用之前，需要先更新`currentPosIndex`的值
+                t.currentPosIndex = posIndex;
                 t._getItemReady(t._dir * -1);
+
+                setTimeout(function () {
+                    t._slideEnd();
+                }, t.duration);
             }
 
             // 归位的情况：移动距离小于有效距离时
-            else if (index === t.currentPosIndex) {
+            else if (posIndex === t.currentPosIndex) {
                 // 归位当前item
                 t._moveItem(t._current, 0);
                 // 归位进入屏幕的另一个item
@@ -189,16 +194,11 @@ class Slide extends React.Component {
                     t._moveItem(t._next, 0);
                 }
             }
-
-            setTimeout(function () {
-                t._slideEnd();
-            }, t.duration);
-        } 
+        }
 
         t._moveBack = null;
         t._dir = null;
     }
-
 
     goNext() {
         var t = this;
@@ -238,6 +238,8 @@ class Slide extends React.Component {
      * 根据指定的偏移量，找到对应的item，将其切换到可移动状态
      * @param {number} offset -1:前一个位置 / 0:当前位置 / 1: 后一个位置
      * @note 任何时刻，可移动状态的item数量只有三个
+     * @note 该方法依赖`currentPosIndex`和`offset`查找目标`item`，
+     *       而`_getItemUnready`方法直接给定了`item`，不需要依赖`currentPosIndex`和`offset`
      */
     _getItemReady(offset) {
         var t = this;
@@ -382,6 +384,11 @@ class Slide extends React.Component {
             // 任意时刻的位移值
             distX = pageX - t.basePageX;
 
+            // 当不是循环模式的时候，第一张和最后一张添加粘性
+            if (t.props.loop === false && ((distX >= 0 && t.currentPosIndex === t._minIndex) || (distX < 0 && t.currentPosIndex === t._maxIndex))) {
+                distX = distX - distX/1.3;
+            }
+
             // 位移后的X坐标
             newPrevX = t._prevX + distX;
             newCurrentX = t._currentX + distX;
@@ -429,10 +436,21 @@ class Slide extends React.Component {
 
         t.browserScrolling = false;
 
+        // 向右滑动
         if (t.deltaX > t.effectiveDelta) {
-            t.goPrev();
-        } else if (t.deltaX < -t.effectiveDelta) {
-            t.goNext();
+            if (t.currentPosIndex === t._minIndex && t.props.loop === false) {
+                t._goto(t.currentPosIndex);
+            } else {
+                t.goPrev();
+            }
+        }
+        // 向左滑动
+        else if (t.deltaX < -t.effectiveDelta) {
+            if (t.currentPosIndex === t._maxIndex && t.props.loop === false) {
+                t._goto(t.currentPosIndex);
+            } else {
+                t.goNext();
+            }
         } else {
             t._goto(t.currentPosIndex);
         }
@@ -455,9 +473,9 @@ class Slide extends React.Component {
         });
     }
 
-    _getRealIndex(dummyIndex) {
+    _getRealIndex(posIndex) {
         var t = this;
-        return t._dummy ? t._dummyIndex[dummyIndex] : dummyIndex;
+        return t._dummy ? t._realIndex[posIndex] : posIndex;
     }
 
     /**
@@ -504,15 +522,17 @@ class Slide extends React.Component {
 Slide.propTypes = {
     height: React.PropTypes.number,
     index: React.PropTypes.number,
-    auto: React.PropTypes.bool
+    auto: React.PropTypes.bool,
+    loop: React.PropTypes.bool
 };
 
 Slide.defaultProps = {
     height: 180,
     index: 0,
     auto: false,
-    onMount: function () {},
-    onSlideEnd: function () {}
+    loop: true,
+    onMount: noop,
+    onSlideEnd: noop
 };
 
 module.exports = Slide;
