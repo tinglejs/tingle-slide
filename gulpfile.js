@@ -1,15 +1,7 @@
 // https://github.com/gulpjs/gulp/tree/master/docs
 var gulp = require('gulp');
 
-// https://www.npmjs.com/package/gulp-webpack/
-var webpack = require("gulp-webpack");
-
-// https://github.com/webpack/webpack-with-common-libs/blob/master/webpack.config.js
-// 开发`Tingle component`时使用的配置
-var developConfig = require('./webpack.develop.js');
-
-// https://www.npmjs.com/package/gulp-rename/
-var rename = require('gulp-rename');
+var webpack = require('webpack');
 
 // https://github.com/terinjokes/gulp-uglify
 var uglify = require('gulp-uglify');
@@ -24,104 +16,66 @@ var sourcemaps = require('gulp-sourcemaps');
 // https://github.com/stevelacy/gulp-stylus
 var stylus = require('gulp-stylus');
 
-// https://www.npmjs.com/package/del/
-var del = require('del');
-
-gulp.task('clear', function () {
-    del(['dist/*'], function (err, deletedFiles) {
-        console.log('###### clear dist done ######');
+gulp.task('pack_demo', function(cb) {
+    webpack(require('./webpack.dev.js'), function (err, stats) {
+        // 重要 打包过程中的语法错误反映在stats中
+        console.log('webpack log:' + stats);
+        if(err) cb(err);
+        console.info('###### pack_demo done ######');
+        cb();
     });
 });
 
-gulp.task('pack_demo', function() {
-    gulp.src('')
-        .pipe(webpack(developConfig))
-        .pipe(gulp.dest('./dist'));
-    console.info('###### pack_demo done ######');
-});
-
-// gulp.task('uglify_component', ['pack_component'], function () {
-//     gulp.src('./dist/**/*.js')
-//         .pipe(uglify())
-//         .pipe(rename(function (path) {
-//             // path = {
-//             //     "dirname": ".",
-//             //     "basename": "Hello",
-//             //     "extname": ".js"
-//             // }
-//             path.basename += '.min';
-//         }))
-//         .pipe(gulp.dest('./dist'));
-//     console.info('###### uglify_component done ######');
-// });
-
-gulp.task('stylus_component', function() {
+gulp.task('stylus_component', function(cb) {
     gulp.src(['./src/**/*.styl'])
         .pipe(sourcemaps.init())
         .pipe(stylus())
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('./src'));
     console.info('###### stylus_component done ######');
+    cb();
 });
 
-gulp.task('stylus_demo', function() {
+gulp.task('stylus_demo', function(cb) {
     gulp.src(['./demo/**/*.styl'])
         .pipe(sourcemaps.init())
         .pipe(stylus())
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('./demo'));
     console.info('###### stylus_demo done ######');
+    cb();
+});
+
+gulp.task('reload_by_js', ['pack_demo'], function () {
+    reload();
+});
+
+gulp.task('reload_by_component_css', ['stylus_component'], function () {
+    reload();
+});
+
+gulp.task('reload_by_demo_css', ['stylus_demo'], function () {
+    reload();
 });
 
 // 开发`Tingle component`时，执行`gulp develop` or `gulp d`
 gulp.task('develop', [
-    'pack_demo', 
-    'stylus_component', 'stylus_demo'
+    'pack_demo',
+    'stylus_component',
+    'stylus_demo'
 ], function() {
-    setTimeout(function () {
-        browserSync({
-            server: {
-                baseDir: './'
-            }
-        });        
-    }, 600);
+    browserSync({
+        server: {
+            baseDir: './'
+        }
+    });
 
-    gulp.watch('src/**/*.js', ['pack_demo', function () {
-        setTimeout(function () {
-            reload();
-        }, 1000);
-    }]);
+    gulp.watch(['src/**/*.js', 'demo/**/*.js'], ['reload_by_js']);
 
-    gulp.watch('src/**/*.styl', ['stylus_component', function () {
-        setTimeout(function () {
-            reload();
-        }, 600);
-    }]);
+    gulp.watch('src/**/*.styl', ['reload_by_component_css']);
 
-    // NOTE: `demo`文件的变化，只打包`demo`文件即可
-    gulp.watch('demo/**/*.js', ['pack_demo', function () {
-        setTimeout(function () {
-            reload();
-        }, 1000);
-    }]);
-
-    gulp.watch('demo/**/*.styl', ['stylus_demo', function () {
-        setTimeout(function () {
-            reload();
-        }, 600);
-    }]);
+    gulp.watch('demo/**/*.styl', ['reload_by_demo_css']);
 });
 
 // 快捷方式
 gulp.task('d', ['develop']);
-
-// 发布`Tingle component`时，执行`gulp publish` or `gulp p`
-gulp.task('publish', [
-    'clear',
-    'pack_demo', 
-    'stylus_component', 
-    'stylus_demo'
-]);
-
-// 快捷方式
-gulp.task('p', ['publish']);

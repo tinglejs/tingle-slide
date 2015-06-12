@@ -31,7 +31,7 @@ class Demo extends React.Component {
     }
 
     componentDidMount() {
-
+        console.log(this.refs.customSlide);
     }
 
     handleSlideMount(slide) {
@@ -40,7 +40,8 @@ class Demo extends React.Component {
     handleSlideEnd(o) {
     }
 
-    handleSlideCount() {
+    handleSlideCount(o) {
+        console.log(o.index);
         this.setState({
             freeCount: this.state.freeCount + 1
         });
@@ -57,13 +58,16 @@ class Demo extends React.Component {
         var t = this;
         return (<div>
             <h3 className="tP10">自定义内容，自定义高度</h3>
-            <Slide ref="customSlide" height={80} autoSlide={false}
+            <Slide ref="customSlide" height={80} auto={false} loop={false}
              onSlideEnd={t.handleSlideCount.bind(t)}
              onMount={t.handleSlideMount.bind(t)}>
                 <div className="tFBV tFBAC tFBJC" style={{backgroundColor:"orange"}}>
                     <div className="tFS20 tFCf">数数玩：{t.state.freeCount}</div>
                 </div>
                 <div className="tFBV tFBAC tFBJC" style={{backgroundColor:"yellowgreen"}}>
+                    <div className="tFS20 tFCf">数数玩：{t.state.freeCount}</div>
+                </div>
+                <div className="tFBV tFBAC tFBJC" style={{backgroundColor:"pink"}}>
                     <div className="tFS20 tFCf">数数玩：{t.state.freeCount}</div>
                 </div>
             </Slide>
@@ -82,32 +86,32 @@ class Demo extends React.Component {
                 marginTop: -24
             }}>
                 {t.state.slideList.map(function (item, index) {
-                    return <div className="tR4 tM2" style={{
+                    return <div key={index} className="tR4 tM2" style={{
                         width: 8,
                         height: 8,
                         backgroundColor: index === t.state.demoIndex ? "#fff" : "rgba(0,0,0, .3)"
                     }}></div>
                 })}
             </div>
-
-            <h3 className="tP10">特殊情况1，item数量等于2</h3>
-            <Slide>
-                {t.state.slideList.slice(0, 2).map(function (item, index) {
-                    return <div key={index} className="tImageSlideItem" style={{
-                        backgroundImage: "url("+ item.img +")"
-                    }}></div>
-                })}
-            </Slide>
-
-            <h3 className="tP10">特殊情况2，item数量等于1，不可切换</h3>
-            <Slide>
-                {t.state.slideList.slice(0, 1).map(function (item, index) {
-                    return <div key={index} className="tImageSlideItem" style={{
-                        backgroundImage: "url("+ item.img +")"
-                    }}></div>
-                })}
-            </Slide>
         </div>)
+
+            // <h3 className="tP10">特殊情况1，item数量等于2</h3>
+            // <Slide>
+            //     {t.state.slideList.slice(0, 2).map(function (item, index) {
+            //         return <div key={index} className="tImageSlideItem" style={{
+            //             backgroundImage: "url("+ item.img +")"
+            //         }}></div>
+            //     })}
+            // </Slide>
+
+            // <h3 className="tP10">特殊情况2，item数量等于1，不可切换</h3>
+            // <Slide>
+            //     {t.state.slideList.slice(0, 1).map(function (item, index) {
+            //         return <div key={index} className="tImageSlideItem" style={{
+            //             backgroundImage: "url("+ item.img +")"
+            //         }}></div>
+            //     })}
+            // </Slide>
     }
 
     // TODO
