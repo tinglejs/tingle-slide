@@ -384,7 +384,8 @@ class Slide extends React.Component {
             // 任意时刻的位移值
             distX = pageX - t.basePageX;
 
-            if (t.props.loop === false && (t.currentPosIndex === t._minIndex || t.currentPosIndex === t._maxIndex)) {
+            // 当不是循环模式的时候，第一张和最后一张添加粘性
+            if (t.props.loop === false && ((distX >= 0 && t.currentPosIndex === t._minIndex) || (distX < 0 && t.currentPosIndex === t._maxIndex))) {
                 distX = distX - distX/1.3;
             }
 
