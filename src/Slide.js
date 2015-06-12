@@ -384,6 +384,10 @@ class Slide extends React.Component {
             // 任意时刻的位移值
             distX = pageX - t.basePageX;
 
+            if (t.props.loop === false && (t.currentPosIndex === t._minIndex || t.currentPosIndex === t._maxIndex)) {
+                distX = distX - distX/1.3;
+            }
+
             // 位移后的X坐标
             newPrevX = t._prevX + distX;
             newCurrentX = t._currentX + distX;
@@ -438,7 +442,7 @@ class Slide extends React.Component {
             } else {
                 t.goPrev();
             }
-        } 
+        }
         // 向左滑动
         else if (t.deltaX < -t.effectiveDelta) {
             if (t.currentPosIndex === t._maxIndex && t.props.loop === false) {
