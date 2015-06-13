@@ -524,6 +524,8 @@ Slide.propTypes = {
     index: React.PropTypes.number,
     auto: React.PropTypes.bool,
     loop: React.PropTypes.bool
+    onMount: React.PropTypes.func,
+    onSlideEnd: React.PropTypes.func
 };
 
 Slide.defaultProps = {
