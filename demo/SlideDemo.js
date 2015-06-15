@@ -41,7 +41,7 @@ class Demo extends React.Component {
     }
 
     handleSlideCount(o) {
-        console.log(o.index);
+        // console.log(o.index);
         this.setState({
             freeCount: this.state.freeCount + 1
         });
@@ -57,7 +57,7 @@ class Demo extends React.Component {
     render() {
         var t = this;
         return (<div>
-            <h3 className="tP10">自定义内容，自定义高度</h3>
+            <h3 className="tP10">自定义内容，自定义高度，循环模式关闭</h3>
             <Slide ref="customSlide" height={80} auto={false} loop={false}
              onSlideEnd={t.handleSlideCount.bind(t)}
              onMount={t.handleSlideMount.bind(t)}>
@@ -93,25 +93,25 @@ class Demo extends React.Component {
                     }}></div>
                 })}
             </div>
+            <h3 className="tP10">特殊情况1，item数量等于2</h3>
+            <Slide>
+                {t.state.slideList.slice(0, 2).map(function (item, index) {
+                    return <div key={index} className="tImageSlideItem" style={{
+                        backgroundImage: "url("+ item.img +")"
+                    }}></div>
+                })}
+            </Slide>
+
+            <h3 className="tP10">特殊情况2，item数量等于1，不可切换</h3>
+            <Slide>
+                {t.state.slideList.slice(0, 1).map(function (item, index) {
+                    return <div key={index} className="tImageSlideItem" style={{
+                        backgroundImage: "url("+ item.img +")"
+                    }}></div>
+                })}
+            </Slide>
         </div>)
 
-            // <h3 className="tP10">特殊情况1，item数量等于2</h3>
-            // <Slide>
-            //     {t.state.slideList.slice(0, 2).map(function (item, index) {
-            //         return <div key={index} className="tImageSlideItem" style={{
-            //             backgroundImage: "url("+ item.img +")"
-            //         }}></div>
-            //     })}
-            // </Slide>
-
-            // <h3 className="tP10">特殊情况2，item数量等于1，不可切换</h3>
-            // <Slide>
-            //     {t.state.slideList.slice(0, 1).map(function (item, index) {
-            //         return <div key={index} className="tImageSlideItem" style={{
-            //             backgroundImage: "url("+ item.img +")"
-            //         }}></div>
-            //     })}
-            // </Slide>
     }
 
     // TODO
