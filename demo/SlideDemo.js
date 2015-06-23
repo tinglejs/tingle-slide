@@ -67,9 +67,6 @@ class Demo extends React.Component {
                 <div className="tFBV tFBAC tFBJC" style={{backgroundColor:"yellowgreen"}}>
                     <div className="tFS20 tFCf">数数玩：{t.state.freeCount}</div>
                 </div>
-                <div className="tFBV tFBAC tFBJC" style={{backgroundColor:"pink"}}>
-                    <div className="tFS20 tFCf">数数玩：{t.state.freeCount}</div>
-                </div>
             </Slide>
 
             <h3 className="tP10">一般情况，item数量大于2</h3>
