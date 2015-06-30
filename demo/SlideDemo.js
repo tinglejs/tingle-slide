@@ -72,6 +72,18 @@ class Demo extends React.Component {
                 </div>
             </Slide>
 
+            <h3 className="tP10">只有2项时且循环模式关闭</h3>
+            <Slide ref="customSlide" height={80} auto={false} loop={false}
+             onSlideEnd={t.handleSlideCount.bind(t)}
+             onMount={t.handleSlideMount.bind(t)}>
+                <div className="tFBV tFBAC tFBJC" style={{backgroundColor:"orange"}}>
+                    <div className="tFS20 tFCf">数数玩：{t.state.freeCount}</div>
+                </div>
+                <div className="tFBV tFBAC tFBJC" style={{backgroundColor:"yellowgreen"}}>
+                    <div className="tFS20 tFCf">数数玩：{t.state.freeCount}</div>
+                </div>
+            </Slide>
+
             <h3 className="tP10">一般情况，item数量大于2</h3>
             <Slide onSlideEnd={t.handleUpdateIndicator.bind(t)}>
                 {t.state.slideList.map(function (item, index) {

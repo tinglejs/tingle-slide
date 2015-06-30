@@ -1,20 +1,21 @@
 var classnames = require('classnames');
+var Context = require('tingle-context');
 
 var win = window;
 var doc = document;
-
-var ua = navigator.userAgent;
-var isMobile  = !!ua.match(/mobile/i) || 'orientation' in win;
-var isPC = !isMobile;
+var isPC = Context.is.pc;
 
 var supportTouch = 'ontouchstart' in window;
-var support3D = ('WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix());
+var support3D = Context.support['3d'];
 
 // 常量
-var START = supportTouch ? 'touchstart' : 'mousedown';
-var MOVE = supportTouch ? 'touchmove' : 'mousemove';
-var END = supportTouch ? 'touchend' : 'mouseup';
-var CANCEL = supportTouch ? 'touchcancel' : 'mouseup';
+var START =  Context.TOUCH.START;
+var MOVE =   Context.TOUCH.MOVE;
+var END =    Context.TOUCH.END;
+var CANCEL = Context.TOUCH.CANCEL;
+
+
+
 var PREV = 'prev';
 var CURRENT = 'current';
 var NEXT = 'next';
