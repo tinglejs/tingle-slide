@@ -63,7 +63,7 @@ class Slide extends React.Component {
 
         // 切换动画的时长
         // TOTO 根据手势滑动的速度来决定动画时长
-        this.duration = 150;
+        this.duration = 200;
 
         this.state = {
             // NOTE: 把list转成state的原因：
@@ -385,7 +385,7 @@ class Slide extends React.Component {
             distX = pageX - t.basePageX;
 
             // 当不是循环模式的时候，第一张和最后一张添加粘性
-            if (t.props.loop === false && ((distX >= 0 && t.currentPosIndex === t._minIndex) || (distX < 0 && t.currentPosIndex === t._maxIndex))) {
+            if (t.props.loop === false && ((distX >= 0 && t.currentPosIndex === t._minIndex) || (distX < 0 && t.currentPosIndex === t._maxIndex) || (distX < 0 && t._dummy && t.currentPosIndex === 1))) {
                 distX = distX - distX/1.3;
             }
 
@@ -438,15 +438,16 @@ class Slide extends React.Component {
 
         // 向右滑动
         if (t.deltaX > t.effectiveDelta) {
-            if (t.currentPosIndex === t._minIndex && t.props.loop === false) {
+            if (t.props.loop === false && t.currentPosIndex === t._minIndex) {
                 t._goto(t.currentPosIndex);
             } else {
                 t.goPrev();
             }
         }
+
         // 向左滑动
         else if (t.deltaX < -t.effectiveDelta) {
-            if (t.currentPosIndex === t._maxIndex && t.props.loop === false) {
+            if (t.props.loop === false && (t.currentPosIndex === t._maxIndex || (t._dummy && t.currentPosIndex === 1))) {
                 t._goto(t.currentPosIndex);
             } else {
                 t.goNext();
@@ -523,7 +524,7 @@ Slide.propTypes = {
     height: React.PropTypes.number,
     index: React.PropTypes.number,
     auto: React.PropTypes.bool,
-    loop: React.PropTypes.bool
+    loop: React.PropTypes.bool,
     onMount: React.PropTypes.func,
     onSlideEnd: React.PropTypes.func
 };

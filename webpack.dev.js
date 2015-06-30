@@ -17,7 +17,7 @@ module.exports = {
     },
     resolve: {
         alias: {
-            'tingle-foo': __dirname + '/tingle/tingle-foo/src' // 自定义别名
+            'tingle-context': __dirname + '/tingle/tingle-context/src' // 自定义别名
         }
     },
     externals: {
