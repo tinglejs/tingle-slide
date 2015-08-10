@@ -15,25 +15,18 @@ var {
 } = Context.TOUCH;
 var support3D = Context.support['3d'];
 var supportTouch = Context.support.touch;
+var isPC = Context.is.pc;
+var {noop} = Context;
 
-console.log(Context);
 
 var win = window;
 var doc = document;
-
-var ua = navigator.userAgent;
-var isMobile  = !!ua.match(/mobile/i) || 'orientation' in win;
-var isPC = !isMobile;
-
-
-var PREV = 'prev';
-var CURRENT = 'current';
-var NEXT = 'next';
+var RESIZE = 'resize';
 var OFFSET = 'offset';
 var POS_MAP = {
-    '-1': PREV,
-    '0': CURRENT,
-    '1': NEXT
+    '-1': '_prevEl',
+    '0': '_currentEl',
+    '1': '_nextEl'
 };
 
 // 创建translate字符串
@@ -61,8 +54,6 @@ var getCursorPage = supportTouch ? function (event, page) {
     return event[page];
 };
 
-var noop = function () {};
-
 class Slide extends React.Component {
 
     constructor(props) {
@@ -77,18 +68,14 @@ class Slide extends React.Component {
         this.duration = 200;
 
         this.state = {
-            // NOTE: 把list转成state的原因：
-            // 当item数量为2时，内部将会复制一份，处理后的数量为4，以实现循环轮播
-            // list: props.list,
-            // 当前item的索引值 以0开始
             auto: props.auto,
+            // 当前item的索引值 以0开始
             index: props.index,
             disabled: false
         }
 
-        win.addEventListener('resize', function () {
-            t._resize.call(t);
-        });
+        // 当屏幕旋转的时候，修正布局
+        win.addEventListener(RESIZE, t, false);
     }
 
     componentWillMount() {
@@ -130,9 +117,9 @@ class Slide extends React.Component {
         }
 
         // 前一个，当前的，后一个item的element引用
-        t._prev = null;
-        t._current = null;
-        t._next = null;
+        t._prevEl = null;
+        t._currentEl = null;
+        t._nextEl = null;
 
         t._deltaX = 0;
         t._minIndex = 0;
@@ -143,6 +130,14 @@ class Slide extends React.Component {
         t.props.onMount(t);
 
         t._autoSlide();
+    }
+
+    componentWillUnmount() {
+        var t = this;
+        if (t.length > 1) {
+            t.el.removeEventListener(START, t, false);
+        }
+        win.removeEventListener(RESIZE, t, false);
     }
 
     _autoSlide() {
@@ -177,9 +172,9 @@ class Slide extends React.Component {
 
             // 通过goNext/goPrev调用的_goto，一直有方向(_dir)值 向左:-1 / 向右:1
             if (t._dir) {
-                t._getItemUnready(t._dir === 1 ? t._next : t._prev);
-                t._moveItem(t._current, t._dir);
-                t._moveItem(t._dir === 1 ? t._prev : t._next, t._dir);
+                t._getItemUnready(t._dir === 1 ? t._nextEl : t._prevEl);
+                t._moveItem(t._currentEl, t._dir);
+                t._moveItem(t._dir === 1 ? t._prevEl : t._nextEl, t._dir);
 
                 // `_getItemReady`方法被调用之前，需要先更新`currentPosIndex`的值
                 t.currentPosIndex = posIndex;
@@ -193,7 +188,7 @@ class Slide extends React.Component {
             // 归位的情况：移动距离小于有效距离时
             else if (posIndex === t.currentPosIndex) {
                 // 归位当前item
-                t._moveItem(t._current, 0);
+                t._moveItem(t._currentEl, 0);
                 // 归位进入屏幕的另一个item
                 // 说明:任意一个时间点,出现在屏幕内的item数量最多为2个,要么左边,要么右边,取决于移动方向
                 if (t._moveBack) {
@@ -201,8 +196,8 @@ class Slide extends React.Component {
                 }
                 // 当resize时
                 else {
-                    t._moveItem(t._prev, 0);
-                    t._moveItem(t._next, 0);
+                    t._moveItem(t._prevEl, 0);
+                    t._moveItem(t._nextEl, 0);
                 }
             }
         }
@@ -241,7 +236,7 @@ class Slide extends React.Component {
         // 如果进行了切换行为，即dir为-1或1
         if (dir) {
             item.setAttribute(OFFSET, newOffset);
-            t['_' + POS_MAP[newOffset]] = item;
+            t[POS_MAP[newOffset]] = item;
         }
     }
 
@@ -259,7 +254,7 @@ class Slide extends React.Component {
         item.classList.add('ready');
         item.setAttribute(OFFSET, offset);
         item.style.webkitTransform = makeTranslate(t._getPosX(offset));
-        t['_' + POS_MAP[offset]] = item;
+        t[POS_MAP[offset]] = item;
     }
 
     /**
@@ -289,7 +284,7 @@ class Slide extends React.Component {
      *
      */
     _setItemX(item, x) {
-        this['_' + POS_MAP[item.getAttribute(OFFSET)] + 'X'] = x;
+        this[POS_MAP[item.getAttribute(OFFSET)] + 'X'] = x;
         item.style.webkitTransform = makeTranslate(x);
     }
 
@@ -325,6 +320,8 @@ class Slide extends React.Component {
                 break;
             case CANCEL:
                 t._touchEnd(e);
+            case RESIZE:
+                t._resize(e);
                 break;
         }
     }
@@ -340,14 +337,14 @@ class Slide extends React.Component {
         clearTimeout(t._autoSlideTimer);
 
         // 恢复到0 拖拽过程中快速响应移动距离
-        t._prev.style.webkitTransitionDuration = '0ms';
-        t._current.style.webkitTransitionDuration = '0ms';
-        t._next.style.webkitTransitionDuration = '0ms';
+        t._prevEl.style.webkitTransitionDuration = '0ms';
+        t._currentEl.style.webkitTransitionDuration = '0ms';
+        t._nextEl.style.webkitTransitionDuration = '0ms';
 
         // 移动初始值
-        t._prevX = t._getPosX(-1);
-        t._currentX = t._getPosX(0);
-        t._nextX = t._getPosX(1);
+        t._prevElX = t._getPosX(-1);
+        t._currentElX = t._getPosX(0);
+        t._nextElX = t._getPosX(1);
 
         // 浏览器默认滚动
         t.browserScrolling = false;
@@ -401,19 +398,19 @@ class Slide extends React.Component {
             }
 
             // 位移后的X坐标
-            newPrevX = t._prevX + distX;
-            newCurrentX = t._currentX + distX;
-            newNextX = t._nextX + distX;
+            newPrevX = t._prevElX + distX;
+            newCurrentX = t._currentElX + distX;
+            newNextX = t._nextElX + distX;
 
             // 更新DOM位置
-            t._setItemX(t._prev, newPrevX);
-            t._setItemX(t._current, newCurrentX);
-            t._setItemX(t._next, newNextX);
+            t._setItemX(t._prevEl, newPrevX);
+            t._setItemX(t._currentEl, newCurrentX);
+            t._setItemX(t._nextEl, newNextX);
 
             if (t.deltaX >= 0) {
-                t._moveBack = t._prev;
+                t._moveBack = t._prevEl;
             } else {
-                t._moveBack = t._next;
+                t._moveBack = t._nextEl;
             }
         } else {
             deltaY = pageY - t.startPageY;
@@ -480,7 +477,7 @@ class Slide extends React.Component {
         var realIndex = t._getRealIndex(t.currentPosIndex);
         t.props.onSlideEnd({
             index: realIndex,
-            item: t._current,
+            item: t._currentEl,
             data: t.props.children[realIndex]
         });
     }

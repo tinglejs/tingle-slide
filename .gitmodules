@@ -1,0 +1,3 @@
+[submodule "tingle/tingle-context"]
+	path = tingle/tingle-context
+	url = git@gitlab.alibaba-inc.com:alinwmobile/tingle-context.git
