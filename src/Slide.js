@@ -1,4 +1,22 @@
+/**
+ * Slide Component for tingle
+ * @author gnosaij
+ *
+ * Copyright 2014-2015, Tingle Team, Alinw.
+ * All rights reserved.
+ */
 var classnames = require('classnames');
+var Context = require('tingle-context');
+var {
+    START,
+    MOVE,
+    END,
+    CANCEL
+} = Context.TOUCH;
+var support3D = Context.support['3d'];
+var supportTouch = Context.support.touch;
+
+console.log(Context);
 
 var win = window;
 var doc = document;
@@ -7,14 +25,7 @@ var ua = navigator.userAgent;
 var isMobile  = !!ua.match(/mobile/i) || 'orientation' in win;
 var isPC = !isMobile;
 
-var supportTouch = 'ontouchstart' in window;
-var support3D = ('WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix());
 
-// 常量
-var START = supportTouch ? 'touchstart' : 'mousedown';
-var MOVE = supportTouch ? 'touchmove' : 'mousemove';
-var END = supportTouch ? 'touchend' : 'mouseup';
-var CANCEL = supportTouch ? 'touchcancel' : 'mouseup';
 var PREV = 'prev';
 var CURRENT = 'current';
 var NEXT = 'next';

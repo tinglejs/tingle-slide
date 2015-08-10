@@ -1,40 +1,34 @@
-# tingle项目起步
+- name: tingle-slide
+- category: tingle
+- caption: true
+- order: 0
+- tags: mobile,H5,手机,移动,tingle,slide,幻灯片,焦点图
+- description: tingle-slide component for tingle.
+- maintainers: gnosaij
 
-## 本地环境
+---
 
-在使用或者参与开发`tingle`项目之前，需要在本地先安装好几个必须的工具。
+## tingle-slide [![Dependency Status](http://img.shields.io/david/tinglejs/tingle-slide.svg?style=flat-square)](https://david-dm.org/tinglejs/tingle-slide) [![devDependency Status](http://img.shields.io/david/dev/tinglejs/tingle-slide.svg?style=flat-square)](https://david-dm.org/tinglejs/tingle-slide#info=devDependencies) [![Bower version](https://badge.fury.io/bo/tingle-slide.svg)](http://badge.fury.io/bo/tingle-slide)
 
-* [Nodejs](https://nodejs.org/)开发环境，安装方法详见官网。
-* [Gulp](http://gulpjs.com/)前端构建平台，推荐以全局方式安装。执行`npm install gulp -g`
+[![tingle-slide](https://nodei.co/npm/tingle-slide.png)](https://npmjs.org/package/tingle-slide)
 
-## 下载代码仓库
+## use
 
-待补充...
+#### 安装tingle-style子模块
 
-## 安装依赖的开发工具或库
+添加`tingle`的基础样式模块，在根目录下，执行下面的命令，通过git的子模块方式，把依赖加载进来。
 
-`tingle`项目所依赖所有开发工具和JS库，在根目录的`package.json`文件中已配置好，进入刚下载好的`tingle`目录，运行下面的命令即可安装。
-
-```
-$ npm install
-```
-
-在安装`webpack`和`babel`工具的过程中，会有编译不通过的情况，通常都是因为大墙内某些依赖的脚本没有下载成功导致。如果出现这种情况，可以使用`cnpm`解决。
-
-安装`cnpm`，并使用`cnpm`安装所有依赖
-
-```
-$ npm install cnpm -g
-$ cnpm install
+```shell
+git submodule add git@gitlab.alibaba-inc.com:alinwmobile/tingle-style.git tingle/tingle-style
 ```
 
-## 启动Server，开启React之旅
-
-所有的准备工作都已准备完毕，现在先启动`server`，看看项目中已有的`demo`吧。执行下面的代码：
+#### 启动
 
 ```
-$ gulp d
+npm start
 ```
 
-上面的命令执行后，稍等片刻，会在浏览器自动打开项目根目录下的`index.html`（其他页面可以手动打开）用来实时预览开发效果，
-页面中如果看到`"为tingle打气"`，说明你的开发环境已搭建成功。
+
+## TODO
+
+* 待解决：通过`yo`如何执行`cli`命令进行`git submodule`的安装。

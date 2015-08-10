@@ -1,35 +1,40 @@
 {
-  "name": "tingle-hello",
+  "name": "tingle-slide",
   "version": "0.0.0",
-  "description": "the hello example for tingle",
-  "repository": "git@gitlab.alibaba-inc.com:alinwmobile/tingle-hello.git",
+  "description": "tingle-slide component for tingle.",
+  "repository": "https://github.com/tinglejs/tingle-slide.git",
+  "author": {
+    "name": "gnosaij",
+    "email": ""
+  },
+  "main": "src/index.js",
   "files": [
-    "dist",
+    "src",
     "README.md"
+  ],
+  "keywords": [
+    "tingle-slide,Slide",
+    "tingle",
+    "slide",
+    "幻灯片",
+    "焦点图"
   ],
   "dependencies": {
     "classnames": "^2.1.2",
-    "fastclick": "~1.0.6",
-    "iscroll": "~5.1.3",
+    "fastclick": "^1.0.6",
     "react": "^0.13.3",
-    "reflux": "^0.2.7",
-    "rsvp": "~3.0.18",
-    "underscore": "^1.8.3",
+    "tingle-context": "latest",
+    "tingle-style": "latest",
     "zepto": "0.0.4"
   },
   "devDependencies": {
-    "babel-core": "^5.2.17",
-    "babel-loader": "^5.0.0",
-    "browser-sync": "~1.9.1",
-    "del": "^1.1.1",
-    "gulp-rename": "^1.2.2",
-    "gulp-sourcemaps": "~1.5.1",
-    "gulp-stylus": "~2.0.1",
-    "gulp-uglify": "^1.2.0",
-    "gulp-webpack": "~1.1.2",
-    "webpack": "^1.8.4"
+    "babel-core": "^5.8.19",
+    "babel-loader": "^5.3.2",
+    "gulp": "^3.9.0",
+    "tingle-dev-tools": "latest"
   },
-  "scripts": {},
-  "author": "gnosaij",
-  "license": "Apache 2"
+  "scripts": {
+    "start": "gulp server"
+  },
+  "license": "MIT"
 }

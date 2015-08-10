@@ -1,7 +1,14 @@
-var Slide = require('../src');
+/**
+ * Slide Component Demo for tingle
+ * @author gnosaij
+ *
+ * Copyright 2014-2015, Tingle Team, Alinw.
+ * All rights reserved.
+ */
 
-// TODO: move the line to tingle-env
-React.initializeTouchEvents(true);
+var classnames = require('classnames');
+
+var Slide = require('../src');
 
 class Demo extends React.Component {
 
@@ -131,4 +138,4 @@ class Demo extends React.Component {
     // }
 };
 
-React.render(<Demo/>, document.getElementById('TingleDemo'));
+module.exports = Demo;
