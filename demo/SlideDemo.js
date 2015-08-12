@@ -33,12 +33,33 @@ class Demo extends React.Component {
                 img: './demo/img/3.jpg',
                 url: '',
                 title: 'item3'
-            }]
+            }],
+            ajaxList: []
         };
     }
 
     componentDidMount() {
         console.log(this.refs.customSlide);
+        var t = this;
+        t.setState({
+            ajaxList: [{
+                img: './demo/img/0.jpg',
+                url: '',
+                title: 'item0'
+            },{
+                img: './demo/img/1.jpg',
+                url: '',
+                title: 'item1'
+            },{
+                img: './demo/img/2.jpg',
+                url: '',
+                title: 'item2'
+            },{
+                img: './demo/img/3.jpg',
+                url: '',
+                title: 'item3'
+            }]
+        })
     }
 
     handleSlideEnd(o) {
@@ -107,6 +128,14 @@ class Demo extends React.Component {
                 {t.state.slideList.slice(0, 1).map(function (item, index) {
                     return <div key={index} className="tImageSlideItem" style={{
                         backgroundImage: "url("+ item.img +")"
+                    }}></div>
+                })}
+            </Slide>
+            <h3 className="tP10">先渲染占位，后填充数据</h3>
+            <Slide>
+                {t.state.ajaxList.map(function(item, index) {
+                    return <div key={index} className="tImageSlideItem" style={{
+                        backgroundImage: "url(" + item.img + ")"
                     }}></div>
                 })}
             </Slide>

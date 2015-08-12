@@ -80,12 +80,51 @@ class Slide extends React.Component {
 
     componentWillMount() {
         var t = this;
+        t._getLength();
+    }
 
+    componentDidMount() {
+        var t = this;
+
+        t.el = React.findDOMNode(t.refs.root);
+
+        // 确定容器宽度
+        t.width = isPC ? t.el.clientWidth : win.innerWidth;
+
+        t._setContext();
+    }
+
+    componentDidUpdate(prevProps) {
+        var t = this;
+        var oldChildrenLength = prevProps.children.length;
+        var newChildrenLength = this.props.children.length;
+        if (newChildrenLength != oldChildrenLength) {
+            t._getLength();
+            t._setContext(prevProps);
+        }
+    }
+
+    componentWillUnmount() {
+        var t = this;
+        if (t.length > 1) {
+            t.el.removeEventListener(START, t, false);
+        }
+        win.removeEventListener(RESIZE, t, false);
+    }
+
+    /**
+     * 获取 slide 列表的真正长度，主要是考虑 children
+     * 长度是 1 和 2 的情况下
+     */
+    _getLength() {
+        var t = this;
         var originLength = React.Children.count(t.props.children);
 
         // TODO: check
         if (originLength === 1) {
-            t.state.disabled = true;
+            t.setState({
+                disabled: true
+            })
         }
 
         // item的长度经处理后不存在为2的情况
@@ -103,13 +142,14 @@ class Slide extends React.Component {
         t.length = t._dummy ? 4 : originLength;
     }
 
-    componentDidMount() {
+    /**
+     * 根据 slide 列表长度设置正确的内部变量
+     *
+     */
+    _setContext(prevProps) {
         var t = this;
 
-        t.el = React.findDOMNode(t);
-
-        // 确定容器宽度
-        t.width = isPC ? t.el.clientWidth : win.innerWidth;
+        t.el.removeEventListener(START, t, false);
 
         // 至少有2张slide时，才初始化事件
         if (t.length > 1) {
@@ -124,20 +164,18 @@ class Slide extends React.Component {
         t._deltaX = 0;
         t._minIndex = 0;
         t._maxIndex = t.length - 1;
-
-        t._goto(t.state.index, true);
-
-        t.props.onMount(t);
-
-        t._autoSlide();
-    }
-
-    componentWillUnmount() {
-        var t = this;
-        if (t.length > 1) {
-            t.el.removeEventListener(START, t, false);
+        if (!prevProps) {
+            t.props.onMount(t);
         }
-        win.removeEventListener(RESIZE, t, false);
+        else {
+            t.setState({
+                index: t.props.index
+            });
+        }
+        if (t.length != 0) {
+            t._goto(t.state.index, true);
+            t._autoSlide();
+        }
     }
 
     _autoSlide() {
@@ -151,18 +189,18 @@ class Slide extends React.Component {
 
     /**
      * @param {number} index 目标位置的索引值
-     * @param {boolean} callFromDidMount 是否是在componentDidMount中被调用的
+     * @param {boolean} callFromDidMount 是否是在 componentDidMount 中被调用的
      */
     _goto(posIndex, callFromDidMount) {
         var t = this;
         callFromDidMount = !!callFromDidMount;
 
         if (t.length === 1 || callFromDidMount) {
-            // `_getItemReady`方法被调用之前，需要先更新`currentPosIndex`的值
+            // `_getItemReady` 方法被调用之前，需要先更新 `currentPosIndex` 的值
             t.currentPosIndex = posIndex;
             t._getItemReady(0);
 
-            if (t.length > 2 || t._dummy) {
+            if (t.length > 2) {
                 t._getItemReady(1);
                 t._getItemReady(-1);
             }
@@ -261,7 +299,7 @@ class Slide extends React.Component {
      * 将指定的item切换到不可移动状态，即不参与切换行为。
      * @param {element} item 要改变状态的item
      * @note 这个函数虽然含义上和_setItemReady对应，但参数直接只用item，
-     *  是处于性能考虑，因为调用该函数的时候，都是明确知道目标item的。
+     *  是出于性能考虑，因为调用该函数的时候，都是明确知道目标item的。
      */
     _getItemUnready(item) {
         var t = this;
@@ -514,7 +552,7 @@ class Slide extends React.Component {
     render() {
         var t = this;
         return (
-            <div className={classnames({
+            <div ref="root" className={classnames({
                 "tSlide": true,
                 "tSlideOff": t.state.disabled,
                 [t.props.className]: !!t.props.className
@@ -530,7 +568,10 @@ class Slide extends React.Component {
 
 Slide.propTypes = {
     className: React.PropTypes.string,
-    height: React.PropTypes.number,
+    height: React.PropTypes.oneOfType([
+        React.PropTypes.number,
+        React.PropTypes.string
+    ]),
     index: React.PropTypes.number,
     auto: React.PropTypes.bool,
     loop: React.PropTypes.bool,
