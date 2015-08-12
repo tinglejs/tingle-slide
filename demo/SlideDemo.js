@@ -41,9 +41,6 @@ class Demo extends React.Component {
         console.log(this.refs.customSlide);
     }
 
-    handleSlideMount(slide) {
-    }
-
     handleSlideEnd(o) {
     }
 
@@ -66,8 +63,7 @@ class Demo extends React.Component {
         return (<div>
             <h3 className="tP10">自定义内容，自定义高度，循环模式关闭</h3>
             <Slide ref="customSlide" height={80} auto={false} loop={false}
-             onSlideEnd={t.handleSlideCount.bind(t)}
-             onMount={t.handleSlideMount.bind(t)}>
+             onSlideEnd={t.handleSlideCount.bind(t)}>
                 <div className="tFBV tFBAC tFBJC" style={{backgroundColor:"orange"}}>
                     <div className="tFS20 tFCf">数数玩：{t.state.freeCount}</div>
                 </div>
@@ -117,25 +113,6 @@ class Demo extends React.Component {
         </div>)
 
     }
-
-    // TODO
-    // render() {
-    //     let t = this;
-    //     return (<div>
-    //         <h3 className="tP10">一般情况，item数量大于2</h3>
-    //         <ImageSlide list={this.state.slideList}
-    //          onMount={t.handleSlideMount.bind(t)}
-    //          onSlideEnd={t.handleSlideEnd.bind(t)}/>
-
-    //         <h3 className="tP10">特殊情况1，item数量等于2</h3>
-    //         <ImageSlide list={this.state.slideList.slice(0, 2)}
-    //          onSlideEnd={t.handleSlideEnd.bind(t)}/>
-
-    //         <h3 className="tP10">特殊情况2，item数量等于1，不可切换</h3>
-    //         <ImageSlide list={this.state.slideList.slice(0, 1)}
-    //          onSlideEnd={t.handleSlideEnd.bind(t)}/>
-    //     </div>)
-    // }
 };
 
 module.exports = Demo;

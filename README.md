@@ -8,27 +8,42 @@
 
 ---
 
-## tingle-slide [![Dependency Status](http://img.shields.io/david/tinglejs/tingle-slide.svg?style=flat-square)](https://david-dm.org/tinglejs/tingle-slide) [![devDependency Status](http://img.shields.io/david/dev/tinglejs/tingle-slide.svg?style=flat-square)](https://david-dm.org/tinglejs/tingle-slide#info=devDependencies) [![Bower version](https://badge.fury.io/bo/tingle-slide.svg)](http://badge.fury.io/bo/tingle-slide)
+## tingle-slide
+
+[![Dependency Status](http://img.shields.io/david/tinglejs/tingle-slide.svg?style=flat-square)](https://david-dm.org/tinglejs/tingle-slide) [![devDependency Status](http://img.shields.io/david/dev/tinglejs/tingle-slide.svg?style=flat-square)](https://david-dm.org/tinglejs/tingle-slide#info=devDependencies) [![Bower version](https://badge.fury.io/bo/tingle-slide.svg)](http://badge.fury.io/bo/tingle-slide)
 
 [![tingle-slide](https://nodei.co/npm/tingle-slide.png)](https://npmjs.org/package/tingle-slide)
 
-## use
+## TL;DR
 
-#### 安装tingle-style子模块
+`tingle-slide`是抽象的幻灯片容器
 
-添加`tingle`的基础样式模块，在根目录下，执行下面的命令，通过git的子模块方式，把依赖加载进来。
 
-```shell
-git submodule add git@gitlab.alibaba-inc.com:alinwmobile/tingle-style.git tingle/tingle-style
-```
-
-#### 启动
+## style
 
 ```
-npm start
+<link rel="stylesheet" href="./src/Slide.css">
+```
+
+## props
+
+所有props都是可选的。
+
+### className 
+
+自定义的扩展样式名称
+
+## demo
+
+```
+<Slide {...props}>
+    <div>item 1</div>
+    <div>item 2</div>
+    <div>item 3</div>
+</Slide>
 ```
 
 
-## TODO
 
-* 待解决：通过`yo`如何执行`cli`命令进行`git submodule`的安装。
+
+

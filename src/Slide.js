@@ -529,6 +529,7 @@ class Slide extends React.Component {
 }
 
 Slide.propTypes = {
+    className: React.PropTypes.string,
     height: React.PropTypes.number,
     index: React.PropTypes.number,
     auto: React.PropTypes.bool,
