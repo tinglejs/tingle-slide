@@ -1,9 +1,11 @@
+# Slide 轮播图
+
 - name: tingle-slide
 - category: tingle
 - caption: true
 - order: 0
 - tags: mobile,H5,手机,移动,tingle,slide,幻灯片,焦点图
-- description: tingle-slide component for tingle.
+- description: 提供常用的轮播功能，支持自动播放。
 - maintainers: gnosaij
 
 ---
@@ -42,8 +44,3 @@
     <div>item 3</div>
 </Slide>
 ```
-
-
-
-
-
