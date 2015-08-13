@@ -20,21 +20,6 @@
 
 `tingle-slide`是抽象的幻灯片容器
 
-
-## style
-
-```
-<link rel="stylesheet" href="./src/Slide.css">
-```
-
-## props
-
-所有props都是可选的。
-
-### className 
-
-自定义的扩展样式名称
-
 ## demo
 
 ```
@@ -44,3 +29,17 @@
     <div>item 3</div>
 </Slide>
 ```
+
+
+### 可用配置
+
+| 配置项 | 必填 | 默认值 | 功能/备注 |
+|---|----|---|----|
+|className| optional |-| className |
+|height| optional |180| Slide 的高度|
+|index| optional |0| 初始化开始轮播的 item 序号|
+|auto|optional|false|是否自动播放|
+|loop|optional|true|是否循环播放|
+|onMount|optional|noop|内容变更的时候触发（在 DidMount 的时候会默认执行一次）|
+|onSlideEnd|optional|noop|切换之后触发的回调|
+
