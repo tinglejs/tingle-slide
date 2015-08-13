@@ -6,7 +6,7 @@
 - order: 0
 - tags: mobile,H5,手机,移动,tingle,slide,幻灯片,焦点图
 - description: 提供常用的轮播功能，支持自动播放。
-- maintainers: gnosaij
+- maintainers: 拂山(74803)
 - screenshots: http://aligitlab.oss-cn-hangzhou-zmf.aliyuncs.com/uploads/alinwmobile/tingle-slide/744cbd0150/image.png
 
 ---
