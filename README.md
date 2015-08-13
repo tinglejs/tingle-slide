@@ -7,6 +7,7 @@
 - tags: mobile,H5,手机,移动,tingle,slide,幻灯片,焦点图
 - description: 提供常用的轮播功能，支持自动播放。
 - maintainers: gnosaij
+- screenshots: http://aligitlab.oss-cn-hangzhou-zmf.aliyuncs.com/uploads/alinwmobile/tingle-slide/744cbd0150/image.png
 
 ---
 
@@ -20,10 +21,12 @@
 
 `tingle-slide`是抽象的幻灯片容器
 
-## demo
+![tingle-slide](http://aligitlab.oss-cn-hangzhou-zmf.aliyuncs.com/uploads/alinwmobile/tingle-slide/744cbd0150/image.png)
+
+## Simple Usage
 
 ```
-<Slide {...props}>
+<Slide>
     <div>item 1</div>
     <div>item 2</div>
     <div>item 3</div>
@@ -31,7 +34,7 @@
 ```
 
 
-### 可用配置
+## 可用配置
 
 | 配置项 | 必填 | 默认值 | 功能/备注 |
 |---|----|---|----|
@@ -43,3 +46,7 @@
 |onMount|optional|noop|内容变更的时候触发（在 DidMount 的时候会默认执行一次）|
 |onSlideEnd|optional|noop|切换之后触发的回调|
 
+## Links 相关链接
+
+- [Fire a bug/Issues 提Bug](http://gitlab.alibaba-inc.com/alinwmobile/tingle-slide/issues)
+- [Tingle项目](http://gitlab.alibaba-inc.com/alinwmobile/tingle/tree/master)
