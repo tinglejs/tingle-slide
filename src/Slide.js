@@ -150,6 +150,7 @@ class Slide extends React.Component {
     _setContext(prevProps) {
         var t = this;
 
+        // 由于子元素数量有变化，先解绑与数量相关的监听，再根据数量重新绑定。
         t.el.removeEventListener(START, t, false);
         t.clearTimeout(t._autoSlideTimer);
 
