@@ -110,6 +110,7 @@ class Slide extends React.Component {
             t.el.removeEventListener(START, t, false);
         }
         win.removeEventListener(RESIZE, t, false);
+        t.clearTimeout(t._autoSlideTimer);
     }
 
     /**
@@ -150,6 +151,7 @@ class Slide extends React.Component {
         var t = this;
 
         t.el.removeEventListener(START, t, false);
+        t.clearTimeout(t._autoSlideTimer);
 
         // 至少有2张slide时，才初始化事件
         if (t.length > 1) {
