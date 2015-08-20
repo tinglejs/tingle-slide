@@ -110,7 +110,7 @@ class Slide extends React.Component {
             t.el.removeEventListener(START, t, false);
         }
         win.removeEventListener(RESIZE, t, false);
-        t.clearTimeout(t._autoSlideTimer);
+        clearTimeout(t._autoSlideTimer);
     }
 
     /**
