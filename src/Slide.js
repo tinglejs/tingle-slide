@@ -152,7 +152,7 @@ class Slide extends React.Component {
 
         // 由于子元素数量有变化，先解绑与数量相关的监听，再根据数量重新绑定。
         t.el.removeEventListener(START, t, false);
-        t.clearTimeout(t._autoSlideTimer);
+        clearTimeout(t._autoSlideTimer);
 
         // 至少有2张slide时，才初始化事件
         if (t.length > 1) {
