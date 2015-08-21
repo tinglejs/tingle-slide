@@ -7,6 +7,7 @@
  */
 var classnames = require('classnames');
 var Context = require('tingle-context');
+var SlideNav = require('./slideNav');
 var {
     START,
     MOVE,
@@ -521,6 +522,10 @@ class Slide extends React.Component {
             item: t._currentEl,
             data: t.props.children[realIndex]
         });
+        // https://facebook.github.io/react/docs/component-api.html#forceupdate
+        // 通常情况下我们不使用 forcecUpdate，但我们需要 slide 过程中的中间变量
+        // 而非最终 state 去触发插件的更新，因此这里我们用到了 forceUpdate。
+        t.forceUpdate();
     }
 
     _getRealIndex(posIndex) {
@@ -564,6 +569,7 @@ class Slide extends React.Component {
                     {t._renderItems()}
                     {t._dummy && t._renderItems(true)}
                 </div>
+                {t.props.showNav && t.length > 1 && <SlideNav active={t._getRealIndex(t.currentPosIndex)} num={t.props.children.length}/>}
             </div>
         );
     }
@@ -578,6 +584,7 @@ Slide.propTypes = {
     index: React.PropTypes.number,
     auto: React.PropTypes.bool,
     loop: React.PropTypes.bool,
+    showNav: React.PropTypes.bool,
     onMount: React.PropTypes.func,
     onSlideEnd: React.PropTypes.func
 };
@@ -587,8 +594,10 @@ Slide.defaultProps = {
     index: 0,
     auto: false,
     loop: true,
+    showNav: false,
     onMount: noop,
     onSlideEnd: noop
 };
+
 
 module.exports = Slide;

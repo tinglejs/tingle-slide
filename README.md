@@ -36,15 +36,16 @@
 
 ## 可用配置
 
-| 配置项 | 必填 | 默认值 | 功能/备注 |
-|---|----|---|----|
-|className| optional |-| className |
-|height| optional |180| Slide 的高度|
-|index| optional |0| 初始化开始轮播的 item 序号|
-|auto|optional|false|是否自动播放|
-|loop|optional|true|是否循环播放|
-|onMount|optional|noop|内容变更的时候触发（在 DidMount 的时候会默认执行一次）|
-|onSlideEnd|optional|noop|切换之后触发的回调|
+| 配置项 | 类型 | 必填 | 默认值 | 功能/备注 |
+|---|----|---|---|----|
+|className| string |optional |-| className |
+|height| string or number |optional |180| Slide 的高度|
+|index| number | optional |0| 初始化开始轮播的 item 序号|
+|auto|boolean|optional|false|是否自动播放|
+|loop|boolean|optional|true|是否循环播放|
+|showNav|boolean|optional|false|是否显示导航用的小点
+|onMount|function|optional|noop|内容变更的时候触发（在 DidMount 的时候会默认执行一次）|
+|onSlideEnd|function|optional|noop|切换之后触发的回调|
 
 ## Links 相关链接
 

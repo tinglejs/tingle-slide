@@ -5,6 +5,18 @@
  * Copyright 2014-2015, Tingle Team, Alinw.
  * All rights reserved.
  */
+.tSlideNav {
+  position: relative;
+  top: -15px;
+}
+.tSlideNav .tSlideNavItem {
+  background-color: rgba(0,0,0,0.3);
+  width: 8px;
+  height: 8px;
+}
+.tSlideNav .tSlideNavItem.active {
+  background-color: #fff;
+}
 .tSlide {
   -webkit-user-select: none;
   -webkit-touch-callout: none;

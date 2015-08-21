@@ -1,0 +1,14 @@
+.tSlideNav {
+  position: relative;
+  top: -15px;
+}
+.tSlideNav .tSlideNavItem {
+  background-color: rgba(0,0,0,0.3);
+  width: 8px;
+  height: 8px;
+}
+.tSlideNav .tSlideNavItem.active {
+  background-color: #fff;
+}
+
+/*# sourceMappingURL=slideNav.css.map */
