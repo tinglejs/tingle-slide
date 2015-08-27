@@ -7,7 +7,7 @@
  */
 var classnames = require('classnames');
 var Context = require('tingle-context');
-var SlideNav = require('./slideNav');
+var SlideNav = require('./SlideNav');
 var {
     START,
     MOVE,
