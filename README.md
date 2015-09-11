@@ -1,31 +1,12 @@
-# Slide 轮播图
-
-- name: tingle-slide
-- category: tingle
-- caption: true
-- order: 0
-- tags: mobile,H5,手机,移动,tingle,slide,幻灯片,焦点图
-- description: 提供常用的轮播功能，支持自动播放。
-- maintainers: 拂山(74803)
-- screenshots: http://aligitlab.oss-cn-hangzhou-zmf.aliyuncs.com/uploads/alinwmobile/tingle-slide/744cbd0150/image.png
-
----
-
-## tingle-slide
-
-[![Dependency Status](http://img.shields.io/david/tinglejs/tingle-slide.svg?style=flat-square)](https://david-dm.org/tinglejs/tingle-slide) [![devDependency Status](http://img.shields.io/david/dev/tinglejs/tingle-slide.svg?style=flat-square)](https://david-dm.org/tinglejs/tingle-slide#info=devDependencies) [![Bower version](https://badge.fury.io/bo/tingle-slide.svg)](http://badge.fury.io/bo/tingle-slide)
-
-[![tingle-slide](https://nodei.co/npm/tingle-slide.png)](https://npmjs.org/package/tingle-slide)
-
-## TL;DR
+# Slide 轮播图 [![Npm version](https://badge.fury.io/js/tingle-slide.svg)](http://badge.fury.io/js/tingle-slide)
 
 `tingle-slide`是抽象的幻灯片容器
 
-![tingle-slide](http://aligitlab.oss-cn-hangzhou-zmf.aliyuncs.com/uploads/alinwmobile/tingle-slide/744cbd0150/image.png)
+<img src="https://img.alicdn.com/tps/TB1FMD9JpXXXXazXFXXXXXXXXXX-750-1254.png" width="375"/>
 
 ## Simple Usage
 
-```
+```js
 <Slide>
     <div>item 1</div>
     <div>item 2</div>
@@ -49,5 +30,4 @@
 
 ## Links 相关链接
 
-- [Fire a bug/Issues 提Bug](http://gitlab.alibaba-inc.com/alinwmobile/tingle-slide/issues)
-- [Tingle项目](http://gitlab.alibaba-inc.com/alinwmobile/tingle/tree/master)
+- [Fire a bug/Issues 提Bug](https://github.com/tinglejs/tingle-slide/issues)

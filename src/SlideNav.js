@@ -19,9 +19,9 @@ class SlideNav extends React.Component {
         let arr = [];
         for (let i = 0; i < t.props.num; i++) {
             arr.push(<div key={i} className={classnames({
-                        "tR4 tM2 tSlideNavItem": true,
-                        "active": i == t.props.active
-                    })}></div>)
+                "tR4 tM2 tSlideNavItem": true,
+                "active": i == t.props.active
+            })}></div>)
         }
         return (
             <div className="tSlideNav tFBH tFBAC tFBJC">
@@ -41,5 +41,7 @@ SlideNav.propTypes = {
     num: React.PropTypes.number,
     active: React.PropTypes.number
 };
+
+SlideNav.displayName='SlideNav';
 
 module.exports = SlideNav;

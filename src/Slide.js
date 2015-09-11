@@ -598,5 +598,6 @@ Slide.defaultProps = {
     onSlideEnd: noop
 };
 
+Slide.displayName='Slide';
 
 module.exports = Slide;

@@ -7,6 +7,9 @@
     "name": "gnosaij",
     "email": "gnosaij@yeah.net"
   },
+  "maintainers":[
+    "yize <yize.shc@gmail.com>"
+  ],
   "main": "src/index.js",
   "files": [
     "src",
@@ -36,5 +39,6 @@
   "scripts": {
     "start": "gulp server"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "screenshots":"https://img.alicdn.com/tps/TB1FMD9JpXXXXazXFXXXXXXXXXX-750-1254.png"
 }
