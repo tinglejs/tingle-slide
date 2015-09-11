@@ -1,11 +1,4 @@
-/**
- * Slide Component Style for tingle
- * @author gnosaij
- *
- * Copyright 2014-2015, Tingle Team, Alinw.
- * All rights reserved.
- */
-
+// https://github.com/gulpjs/gulp/tree/master/docs
 var gulp = require('gulp');
 var devTools = require('tingle-dev-tools');
 gulp.tasks = devTools.tasks;

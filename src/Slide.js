@@ -5,26 +5,25 @@
  * Copyright 2014-2015, Tingle Team, Alinw.
  * All rights reserved.
  */
-var classnames = require('classnames');
-var Context = require('tingle-context');
-var SlideNav = require('./SlideNav');
-var {
-    START,
-    MOVE,
-    END,
-    CANCEL
-} = Context.TOUCH;
-var support3D = Context.support['3d'];
-var supportTouch = Context.support.touch;
-var isPC = Context.is.pc;
-var {noop} = Context;
+let classnames = require('classnames');
+let Context = require('tingle-context');
+let SlideNav = require('./SlideNav');
+let {
+    TOUCH_START,
+    TOUCH_MOVE,
+    TOUCH_END,
+    TOUCH_CANCEL,
+    support3D,
+    supportTouch,
+    isPC,
+    noop,
+    RESIZE
+    } = Context;
 
-
-var win = window;
-var doc = document;
-var RESIZE = 'resize';
-var OFFSET = 'offset';
-var POS_MAP = {
+let win = window;
+let doc = document;
+let OFFSET = 'offset';
+let POS_MAP = {
     '-1': '_prevEl',
     '0': '_currentEl',
     '1': '_nextEl'
@@ -32,12 +31,12 @@ var POS_MAP = {
 
 // 创建translate字符串
 // TODO: translate(0,0) translateZ(0);
-var makeTranslate = (function () {
-    var prefix = support3D ? 'translate3d(' : 'translate(';
-    var suffix = support3D ? ', 0)'         : ')';
-    var join   = ',';
+let makeTranslate = (function () {
+    let prefix = support3D ? 'translate3d(' : 'translate(';
+    let suffix = support3D ? ', 0)' : ')';
+    let join = ',';
 
-    function v (n) {
+    function v(n) {
         n = '' + (n || 0);
         n = n.indexOf('%') > -1 ? n : n + 'px';
         return n;
@@ -49,7 +48,7 @@ var makeTranslate = (function () {
 })();
 
 // 获取兼容PC和Device的event对象的page属性
-var getCursorPage = supportTouch ? function (event, page) {
+let getCursorPage = supportTouch ? function (event, page) {
     return event.changedTouches[0][page];
 } : function (event, page) {
     return event[page];
@@ -59,7 +58,7 @@ class Slide extends React.Component {
 
     constructor(props) {
         super(props);
-        var t = this;
+        let t = this;
 
         // 能够触发切换的最小偏移量
         this.effectiveDelta = 40;
@@ -73,19 +72,19 @@ class Slide extends React.Component {
             // 当前item的索引值 以0开始
             index: props.index,
             disabled: false
-        }
+        };
 
         // 当屏幕旋转的时候，修正布局
         win.addEventListener(RESIZE, t, false);
     }
 
     componentWillMount() {
-        var t = this;
+        let t = this;
         t._getLength();
     }
 
     componentDidMount() {
-        var t = this;
+        let t = this;
 
         t.el = React.findDOMNode(t.refs.root);
 
@@ -96,9 +95,9 @@ class Slide extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        var t = this;
-        var oldChildrenLength = prevProps.children.length;
-        var newChildrenLength = this.props.children.length;
+        let t = this;
+        let oldChildrenLength = prevProps.children.length;
+        let newChildrenLength = this.props.children.length;
         if (newChildrenLength != oldChildrenLength) {
             t._getLength();
             t._setContext(prevProps);
@@ -106,9 +105,9 @@ class Slide extends React.Component {
     }
 
     componentWillUnmount() {
-        var t = this;
+        let t = this;
         if (t.length > 1) {
-            t.el.removeEventListener(START, t, false);
+            t.el.removeEventListener(TOUCH_START, t, false);
         }
         win.removeEventListener(RESIZE, t, false);
         clearTimeout(t._autoSlideTimer);
@@ -119,8 +118,8 @@ class Slide extends React.Component {
      * 长度是 1 和 2 的情况下
      */
     _getLength() {
-        var t = this;
-        var originLength = React.Children.count(t.props.children);
+        let t = this;
+        let originLength = React.Children.count(t.props.children);
 
         // TODO: check
         if (originLength === 1) {
@@ -133,10 +132,10 @@ class Slide extends React.Component {
         else if (originLength === 2) {
             t._dummy = true;
             t._realIndex = {
-                '0' : 0,
-                '1' : 1,
-                '2' : 0,
-                '3' : 1
+                '0': 0,
+                '1': 1,
+                '2': 0,
+                '3': 1
             };
         }
 
@@ -149,15 +148,15 @@ class Slide extends React.Component {
      *
      */
     _setContext(prevProps) {
-        var t = this;
+        let t = this;
 
         // 由于子元素数量有变化，先解绑与数量相关的监听，再根据数量重新绑定。
-        t.el.removeEventListener(START, t, false);
+        t.el.removeEventListener(TOUCH_START, t, false);
         clearTimeout(t._autoSlideTimer);
 
         // 至少有2张slide时，才初始化事件
         if (t.length > 1) {
-            t.el.addEventListener(START, t, false);
+            t.el.addEventListener(TOUCH_START, t, false);
         }
 
         // 前一个，当前的，后一个item的element引用
@@ -183,7 +182,7 @@ class Slide extends React.Component {
     }
 
     _autoSlide() {
-        var t = this;
+        let t = this;
         if (!t.state.auto) return;
         t._autoSlideTimer = setTimeout(function () {
             t.goNext();
@@ -196,7 +195,7 @@ class Slide extends React.Component {
      * @param {boolean} callFromDidMount 是否是在 componentDidMount 中被调用的
      */
     _goto(posIndex, callFromDidMount) {
-        var t = this;
+        let t = this;
         callFromDidMount = !!callFromDidMount;
 
         if (t.length === 1 || callFromDidMount) {
@@ -249,14 +248,14 @@ class Slide extends React.Component {
     }
 
     goNext() {
-        var t = this;
+        let t = this;
         // 方向是向左(-1)，要展现的是后一张(1)
         t._dir = -1;
         t._goto(t._getPosIndex(1));
     }
 
     goPrev() {
-        var t = this;
+        let t = this;
         // 方向是向右(1)，要展现的是前一张(-1)
         t._dir = 1;
         t._goto(t._getPosIndex(-1));
@@ -268,10 +267,10 @@ class Slide extends React.Component {
      * @param {number} dir 移动的方向 -1:向左移动 / 1:向右移动 / 0:移动到原位
      */
     _moveItem(item, dir) {
-        var t = this;
+        let t = this;
         item.style.webkitTransitionDuration = t.duration + 'ms';
 
-        var newOffset = +item.getAttribute(OFFSET) + dir;
+        let newOffset = +item.getAttribute(OFFSET) + dir;
 
         t._setItemX(item, t._getPosX(newOffset));
 
@@ -290,9 +289,9 @@ class Slide extends React.Component {
      *       而`_getItemUnready`方法直接给定了`item`，不需要依赖`currentPosIndex`和`offset`
      */
     _getItemReady(offset) {
-        var t = this;
-        var targetPosIndex = t._getPosIndex(offset);
-        var item = React.findDOMNode(t.refs['item'+ targetPosIndex]);
+        let t = this;
+        let targetPosIndex = t._getPosIndex(offset);
+        let item = React.findDOMNode(t.refs['item' + targetPosIndex]);
         item.classList.add('ready');
         item.setAttribute(OFFSET, offset);
         item.style.webkitTransform = makeTranslate(t._getPosX(offset));
@@ -306,7 +305,7 @@ class Slide extends React.Component {
      *  是出于性能考虑，因为调用该函数的时候，都是明确知道目标item的。
      */
     _getItemUnready(item) {
-        var t = this;
+        let t = this;
         item.classList.remove('ready');
         item.removeAttribute(OFFSET);
         item.style.webkitTransitionDuration = '0';
@@ -318,7 +317,7 @@ class Slide extends React.Component {
      * @param {number} offset -1:前一个位置 / 0:当前位置 / 1: 后一个位置
      */
     _getPosX(offset) {
-        var t = this;
+        let t = this;
         return offset === -1 ? -t.width : offset === 1 ? t.width : 0;
     }
 
@@ -335,7 +334,7 @@ class Slide extends React.Component {
      * @param {number} offset -1:取前一个位置 / 0:取当前位置 / 1: 取后一个位置
      */
     _getPosIndex(offset) {
-        var t = this, index;
+        let t = this, index;
         if (offset === -1) {
             index = t.currentPosIndex === t._minIndex ? t._maxIndex : t.currentPosIndex - 1;
         } else if (offset === 1) {
@@ -349,18 +348,18 @@ class Slide extends React.Component {
     }
 
     handleEvent(e) {
-        var t = this;
+        let t = this;
         switch (e.type) {
-            case START:
+            case TOUCH_START:
                 t._touchStart(e);
                 break;
-            case MOVE:
+            case TOUCH_MOVE:
                 t._touchMove(e);
                 break;
-            case END:
+            case TOUCH_END:
                 t._touchEnd(e);
                 break;
-            case CANCEL:
+            case TOUCH_CANCEL:
                 t._touchEnd(e);
             case RESIZE:
                 t._resize(e);
@@ -374,7 +373,7 @@ class Slide extends React.Component {
             return;
         }
 
-        var t = this;
+        let t = this;
 
         clearTimeout(t._autoSlideTimer);
 
@@ -399,8 +398,8 @@ class Slide extends React.Component {
         t.basePageX = t.startPageX;
         t.startTime = e.timeStamp;
 
-        doc.addEventListener(MOVE, t, false);
-        doc.addEventListener(END, t, false);
+        doc.addEventListener(TOUCH_MOVE, t, false);
+        doc.addEventListener(TOUCH_END, t, false);
     }
 
     _touchMove(e) {
@@ -409,14 +408,14 @@ class Slide extends React.Component {
             return;
         }
 
-        var t = this;
+        let t = this;
 
         // 如果浏览器默认滚动行为已被触发，则不执行Slider的滚动
         if (t.browserScrolling) {
             return;
         }
 
-        var pageX = getCursorPage(e, 'pageX'),
+        let pageX = getCursorPage(e, 'pageX'),
             pageY = getCursorPage(e, 'pageY'),
             distX,
             newPrevX,
@@ -436,7 +435,7 @@ class Slide extends React.Component {
 
             // 当不是循环模式的时候，第一张和最后一张添加粘性
             if (t.props.loop === false && ((distX >= 0 && t.currentPosIndex === t._minIndex) || (distX < 0 && t.currentPosIndex === t._maxIndex) || (distX < 0 && t._dummy && t.currentPosIndex === 1))) {
-                distX = distX - distX/1.3;
+                distX = distX - distX / 1.3;
             }
 
             // 位移后的X坐标
@@ -463,7 +462,7 @@ class Slide extends React.Component {
                 e.preventDefault();
                 e.stopPropagation();
                 t.sliding = true;
-            } else if (Math.abs(deltaY)> 5) {
+            } else if (Math.abs(deltaY) > 5) {
                 t.browserScrolling = true;
             }
         }
@@ -477,7 +476,7 @@ class Slide extends React.Component {
             return;
         }
 
-        var t = this;
+        let t = this;
 
         // 如果浏览器默认滚动行为已被触发，则不执行Slider的滚动
         if (t.browserScrolling) {
@@ -508,15 +507,15 @@ class Slide extends React.Component {
 
         t.deltaX = 0;
 
-        doc.removeEventListener(MOVE, t, false);
-        doc.removeEventListener(END, t, false);
+        doc.removeEventListener(TOUCH_MOVE, t, false);
+        doc.removeEventListener(TOUCH_END, t, false);
 
         t._autoSlide();
     }
 
     _slideEnd() {
-        var t = this;
-        var realIndex = t._getRealIndex(t.currentPosIndex);
+        let t = this;
+        let realIndex = t._getRealIndex(t.currentPosIndex);
         t.props.onSlideEnd({
             index: realIndex,
             item: t._currentEl,
@@ -529,7 +528,7 @@ class Slide extends React.Component {
     }
 
     _getRealIndex(posIndex) {
-        var t = this;
+        let t = this;
         return t._dummy ? t._realIndex[posIndex] : posIndex;
     }
 
@@ -537,7 +536,7 @@ class Slide extends React.Component {
      * 当屏幕旋转时，更新基本数据 && 再次定位
      */
     _resize() {
-        var t = this;
+        let t = this;
         t.width = isPC ? t.el.clientWidth : win.innerWidth;
         t._goto(t.currentPosIndex);
     }
@@ -548,17 +547,17 @@ class Slide extends React.Component {
      * @note 只有当`props.children`的长度为2时，才需要进行补位
      */
     _renderItems(dummyMode) {
-        var t = this;
+        let t = this;
         return t.props.children.map(function (Child, index) {
             return <div ref={"item" + (index + (dummyMode ? 2 : 0))} key={index + (dummyMode ? 2 : 0)}
-             className={"tSlideItem tSlideItem" + t._getRealIndex(index)}>
+                className={"tSlideItem tSlideItem" + t._getRealIndex(index)}>
                 {Child}
             </div>;
         });
     }
 
     render() {
-        var t = this;
+        let t = this;
         return (
             <div ref="root" className={classnames({
                 "tSlide": true,

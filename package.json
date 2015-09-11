@@ -1,11 +1,11 @@
 {
   "name": "tingle-slide",
-  "version": "0.0.0",
+  "version": "0.2.0",
   "description": "tingle-slide component for tingle.",
   "repository": "https://github.com/tinglejs/tingle-slide.git",
   "author": {
     "name": "gnosaij",
-    "email": ""
+    "email": "gnosaij@yeah.net"
   },
   "main": "src/index.js",
   "files": [
@@ -13,7 +13,8 @@
     "README.md"
   ],
   "keywords": [
-    "tingle-slide,Slide",
+    "tingle-slide",
+    "Slide",
     "tingle",
     "slide",
     "幻灯片",
@@ -21,17 +22,16 @@
   ],
   "dependencies": {
     "classnames": "^2.1.2",
-    "fastclick": "^1.0.6",
-    "react": "^0.13.3",
-    "tingle-context": "latest",
-    "tingle-style": "latest",
-    "zepto": "0.0.4"
+    "tingle-context": "~0.1.0",
+    "tingle-style": "~0.2.0"
   },
   "devDependencies": {
     "babel-core": "^5.8.19",
     "babel-loader": "^5.3.2",
     "gulp": "^3.9.0",
-    "tingle-dev-tools": "latest"
+    "tingle-dev-tools": "latest",
+    "fastclick": "^1.0.6",
+    "react": "^0.13.3"
   },
   "scripts": {
     "start": "gulp server"
