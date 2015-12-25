@@ -8,4 +8,4 @@
 
 var Context = require('tingle-context');
 var Demo = require('./SlideDemo');
-React.render(<Demo/>, document.getElementById('TingleDemo'));
+ReactDOM.render(<Demo/>, document.getElementById('TingleDemo'));

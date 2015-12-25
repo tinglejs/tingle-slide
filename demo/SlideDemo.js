@@ -38,7 +38,6 @@ class Demo extends React.Component {
     }
 
     componentDidMount() {
-        console.log(this.refs.customSlide);
         var t = this;
         t.setState({
             ajaxList: [{

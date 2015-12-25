@@ -86,7 +86,7 @@ class Slide extends React.Component {
     componentDidMount() {
         let t = this;
 
-        t.el = React.findDOMNode(t.refs.root);
+        t.el = t.refs.root;
 
         // 确定容器宽度
         t.width = isPC ? t.el.clientWidth : win.innerWidth;
@@ -291,7 +291,7 @@ class Slide extends React.Component {
     _getItemReady(offset) {
         let t = this;
         let targetPosIndex = t._getPosIndex(offset);
-        let item = React.findDOMNode(t.refs['item' + targetPosIndex]);
+        let item = t.refs['item' + targetPosIndex];
         item.classList.add('ready');
         item.setAttribute(OFFSET, offset);
         item.style.webkitTransform = makeTranslate(t._getPosX(offset));
